@@ -1,20 +1,24 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.0.20
+version=v0.29.0
 
 #Script Requirements
 prereqname=('Curl' )
 prereq=('curl')
 
+#Default Container Names
+container_name=('Portainer' 'Watchtower' 'PHPmyadmin' 'Mariadb' 'Organizr' 'Postgres' 'Guacamole')
 
 #Script config variables
 tzone=$(cat /etc/timezone)
 uid=$(id -u $(logname))
 ugp=$(cut -d: -f3 < <(getent group docker))
 ubu_code=$(cut -d: -f2 < <(lsb_release -c)| xargs)
+docker_dir='/opt/docker'
 docker_data='/opt/docker/data'
 docker_init='/opt/docker/init'
+CURRENT_DIR=`dirname $0`
 
 #Modules
 
@@ -35,14 +39,24 @@ script_prereq()
 		
 		done
 		echo
-
-
     } 
+
+ # Script Requirements
+default_container_names()
+    {
+        echo
+        echo -e "\e[1;36m> Installing default containers:\e[0m"
+        echo
+		for ((i=0; i < "${#container_name[@]}"; i++)) 
+		do
+		    echo -e "\e[1;36m$i. ${container_name[$i]}\e[0m"
+		done
+		echo
+    }    
 
 # Docker Installation
 docker_install()
 	{
-        echo "- Your choice: 1. Docker and Docker Compose Install"
         #add docker source
         touch /etc/apt/sources.list.d/docker.list
 		if [ $ubu_code = "bionic" ]
@@ -89,6 +103,7 @@ docker_env_set()
         echo "USERDIR=/home/$(logname)" >> /etc/environment
         echo "ROOTDIR="/opt/docker"" >> /etc/environment
         echo "DATADIR="/opt/docker/data"" >> /etc/environment
+        echo "MYSQL_ROOT_PASSWORD="changeMe!"" >> /etc/environment
 
 	    if [ ! -d "$docker_data" ]; then
 		mkdir -p $docker_data
@@ -100,6 +115,34 @@ docker_env_set()
         rm -rf ./inst_temp
         echo -e "\e[1;36m> Docker variables set...\e[0m"
     }
+
+# Docker Variables and Folders
+docker_default_containers()
+	{
+        echo -e "\e[1;36m> Setting Default Docker Containers...\e[0m"
+        default_container_names
+	    cp $CURRENT_DIR/config/docker-compose.yml $docker_dir
+        cp $CURRENT_DIR/config/apps/guacamole/initdb.sql $docker_init
+        echo -e "\e[1;36m> Containers config added...\e[0m"
+        rm -rf ./inst_2_temp
+        touch ./inst_3_temp
+        sleep 3s
+        source ~/.bashrc
+
+    }
+
+# Pull containers
+docker_pull_containers()
+	{
+        echo -e "\e[1;36m> Pulling containers...\e[0m"
+        cd $docker_dir
+        docker-compose up -d
+        docker-compose stop && sudo docker-compose rm
+        docker-compose up -d
+        cd $CURRENT_DIR
+
+    }
+    
 
 # Docker Installation
 test_env_set()
@@ -152,6 +195,20 @@ show_menus()
         sleep 3s
         clear
 		fi
+
+        if [ -e "./inst_2_temp" ]; then
+        docker_default_containers
+        sleep 3s
+        clear
+		fi
+
+        if [ -e "./inst_3_temp" ]; then
+        docker_pull_containers
+        sleep 3s
+        clear
+		fi
+
+
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo -e " 	  \e[1;36mDocker- INSTALLER $version  \e[0m"
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -169,6 +226,7 @@ show_menus()
 		case $options in
 	 	"1")
 			echo "- Your choice: 1. Install Docker & Docker Compose"
+            echo
             script_prereq
             docker_install
                 	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
@@ -177,8 +235,14 @@ show_menus()
 
 	 	"2")
 			echo "- Your choice 2: Install Docker/Docker Compose + Containers [coming soon]"
+            touch ./inst_2_temp
             script_prereq
             docker_install
+            sleep 3s
+		    chmod +x $BASH_SOURCE
+		    exec ./install.sh
+            docker_default_containers
+            rm -rf ./inst_3_temp
                 	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;; 
@@ -190,6 +254,11 @@ show_menus()
 			read
 		;;
         
+	 	"6")
+	        default_container_names
+            read
+		;;
+
 	 	"5")
 	        gh_updater_mod
 		;;
