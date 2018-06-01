@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.33.0
+version=v0.34.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -110,8 +110,8 @@ docker_env_set()
         echo "PGID=$ugp" >> /etc/environment
         echo 'TZ="'"$tzone"'"' >> /etc/environment
         echo 'USERDIR="'"/home/$(logname)"'"' >> /etc/environment
-        echo 'ROOTDIR="/opt/docker"' >> /etc/environment
-        echo 'DATADIR="/opt/docker/data"' >> /etc/environment
+        echo 'ROOTDIR="'"$docker_dir"'"' >> /etc/environment
+        echo 'DATADIR="'"$docker_data"'"' >> /etc/environment
         echo 'MYSQL_ROOT_PASSWORD="changeMe!"' >> /etc/environment
 
 	    if [ ! -d "$docker_data" ]; then
@@ -135,7 +135,6 @@ docker_default_containers()
         echo -e "\e[1;36m> Containers config added...\e[0m"
         rm -rf ./inst_2_temp
         touch ./inst_3_temp
-
         #Reload shell
         shell_reload
     }
@@ -157,18 +156,23 @@ docker_cont_config_update()
 	{
         echo -e "\e[1;36m> Updating container config...\e[0m"
         cd $docker_dir
+        echo
+        echo -e "\e[1;36m> docker-compose up -d\e[0m"
         docker-compose up -d
+        echo
         echo -e "\e[1;36m> Done!!!...\e[0m"
         echo 
         cd $CURRENT_DIR
-
     }
 
 docker_img_cleanup()
 	{
         echo -e "\e[1;36m> Cleaning up...\e[0m"
         cd $docker_dir
+        echo
+        echo -e "\e[1;36m> docker system prune && docker image prune && docker volume prune\e[0m"
         docker system prune && docker image prune && docker volume prune
+        echo
         echo -e "\e[1;36m> Done!!!...\e[0m"
         echo 
         cd $CURRENT_DIR
@@ -176,7 +180,7 @@ docker_img_cleanup()
     }               
         
 
-# Docker Installation
+# Debug env vars
 test_env_set()
 	{
         echo "timezone = $tzone"
@@ -193,8 +197,7 @@ test_env_set()
         echo "export ROOTDIR="/opt/docker""
         echo "export DATADIR="/opt/docker/data""
         echo "export MYSQL_ROOT_PASSWORD="changeMe!""
-        read
- 
+        read 
 	}
 
  shell_reload()
@@ -202,7 +205,6 @@ test_env_set()
         sleep 3s
 		chmod +x $BASH_SOURCE
 		exec ./install.sh
-
     }   
 
 #script Updater
@@ -250,7 +252,7 @@ show_menus()
 		fi
 
         if [ -e "./inst_3_temp" ]; then
-        test_env_set
+        #test_env_set #debug
         docker_pull_containers
         sleep 3s
         clear
