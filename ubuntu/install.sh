@@ -7,12 +7,15 @@ version=v0.21.0
 prereqname=('Curl' )
 prereq=('curl')
 
+#Default Container Names
+container_name=('Portainer' 'Watchtower' 'PHPmyadmin' 'Mariadb' 'Organizr' 'Postgres' 'Guacamole')
 
 #Script config variables
 tzone=$(cat /etc/timezone)
 uid=$(id -u $(logname))
 ugp=$(cut -d: -f3 < <(getent group docker))
 ubu_code=$(cut -d: -f2 < <(lsb_release -c)| xargs)
+docker_dir='/opt/docker'
 docker_data='/opt/docker/data'
 docker_init='/opt/docker/init'
 
@@ -35,9 +38,20 @@ script_prereq()
 		
 		done
 		echo
-
-
     } 
+
+ # Script Requirements
+default_container_names()
+    {
+        echo
+        echo -e "\e[1;36m> Installing default containers:\e[0m"
+        echo
+		for ((i=0; i < "${#container_name[@]}"; i++)) 
+		do
+		    echo -e "\e[1;36m$i. ${container_name[$i]}\e[0m"
+		done
+		echo
+    }    
 
 # Docker Installation
 docker_install()
@@ -88,6 +102,7 @@ docker_env_set()
         echo "USERDIR=/home/$(logname)" >> /etc/environment
         echo "ROOTDIR="/opt/docker"" >> /etc/environment
         echo "DATADIR="/opt/docker/data"" >> /etc/environment
+        echo "MYSQL_ROOT_PASSWORD="changeMe!"" >> /etc/environment
 
 	    if [ ! -d "$docker_data" ]; then
 		mkdir -p $docker_data
@@ -99,6 +114,17 @@ docker_env_set()
         rm -rf ./inst_temp
         echo -e "\e[1;36m> Docker variables set...\e[0m"
     }
+
+# Docker Variables and Folders
+docker_default_containers()
+	{
+        echo -e "\e[1;36m> Setting Default Docker Containers...\e[0m"
+        default_container_names
+	    cp $CURRENT_DIR/config/docker-compose.yml $docker_dir
+        cp $CURRENT_DIR/config/apps/guacamole/initdb.sql $docker_init
+        echo -e "\e[1;36m> Containers config added...\e[0m"
+    }
+    
 
 # Docker Installation
 test_env_set()
@@ -179,6 +205,7 @@ show_menus()
 			echo "- Your choice 2: Install Docker/Docker Compose + Containers [coming soon]"
             script_prereq
             docker_install
+            docker_default_containers
                 	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;; 
@@ -190,6 +217,11 @@ show_menus()
 			read
 		;;
         
+	 	"6")
+	        default_container_names
+            read
+		;;
+
 	 	"5")
 	        gh_updater_mod
 		;;

@@ -1,0 +1,110 @@
+version: "3.6"
+services:
+    portainer:
+        container_name: portainer
+        hostname: portainer
+        image: portainer/portainer
+        restart: unless-stopped
+        ports:
+            - 9000:9000
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ${DATADIR}/portainer/data:/data
+            - ${DATADIR}/portainer/shared:/shared
+    watchtower:
+        container_name: watchtower
+        hostname: watchtower
+        image: v2tec/watchtower
+        restart: always
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        command: --schedule "0 0 4 * * *" --cleanup
+    phpmyadmin:
+        container_name: phpmyadmin
+        hostname: phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        restart: unless-stopped
+        ports:
+            - 8888:80
+        links:
+            - mariadb:db
+        environment:
+            - PMA_HOST=mariadb
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    mariadb:
+        container_name: mariadb
+        hostname: mariadb
+        image: linuxserver/mariadb
+        restart: unless-stopped
+        ports:
+            - target: 3306
+              protocol: tcp
+              mode: host
+              published: 3306
+        volumes:
+            - ${DATADIR}/mariadb:/config
+        
+        environment:
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - TZ=${TZ}
+    organizr:
+        container_name: organizrV2
+        hostname: organizrV2
+        image: tronyx/docker-organizr-v2
+        restart: unless-stopped
+        ports:
+            - 80:80
+        volumes:
+            - ${DATADIR}/organizrV2:/config
+        environment:
+            - PUID=${PUID}
+            - PGID=${PGID}
+            - TZ=${TZ}
+    postgres:
+        container_name: postgres
+        hostname: postgres
+        image: postgres
+        restart: unless-stopped
+        volumes:
+            - ./init:/docker-entrypoint-initdb.d
+            - ${DATADIR}/postgres:/var/lib/postgresql/data
+        environment:
+            POSTGRES_USER: post_admin
+            POSTGRES_PASSWORD: post_p@ss
+            POSTGRES_DB: guacamole_db
+        networks:
+            - guac
+    guacd:
+        container_name: guacd
+        hostname: guacd
+        image: glyptodon/guacd
+        restart: unless-stopped
+        networks:
+            - guac
+    guac:
+        container_name: guac
+        hostname: guac
+        image: guacamole/guacamole:0.9.12-incubating
+        restart: unless-stopped
+        ports:
+            - 8080:8080
+        environment:
+            POSTGRES_HOSTNAME: postgres
+            POSTGRES_DATABASE: guacamole_db
+            POSTGRES_USER: post_admin
+            POSTGRES_PASSWORD: post_p@ss
+            GUACD_PORT_4822_TCP_ADDR: guacd
+            GUACD_PORT_4822_TCP_PORT: 4822
+            GUACD_HOSTNAME: guacd
+            GUACD_PORT: 4822
+        networks:
+            - guac
+        depends_on:
+            - postgres
+            - guacd
+
+networks:
+    guac:
+        driver: bridge
