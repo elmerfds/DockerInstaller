@@ -7,4 +7,5 @@
 4. `sudo bash install.sh`
 
 **Note 1:** Please make sure to run as sudo.
+
 **Note 2:** Please note this is a work in progress.
