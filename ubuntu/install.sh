@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.30.1
+version=v0.30.8
 
 #Script Requirements
 prereqname=('Curl' )
@@ -19,6 +19,15 @@ docker_dir='/opt/docker'
 docker_data='/opt/docker/data'
 docker_init='/opt/docker/init'
 CURRENT_DIR=`dirname $0`
+
+#Temp env variables 
+export PUID=$uid
+export PGID=$ugp
+export TZ="$tzone"
+export USERDIR="/home/$(logname)"
+export ROOTDIR="/opt/docker"
+export DATADIR="/opt/docker/data"
+export MYSQL_ROOT_PASSWORD="changeMe!"
 
 #Modules
 
@@ -88,9 +97,8 @@ docker_install()
         #install maintainer
         touch ./inst_temp
 
-        sleep 3s
-		chmod +x $BASH_SOURCE
-		exec ./install.sh
+        #Reloading Shell, to get docker group id
+        shell_reload
 	}
 
 # Docker Variables and Folders
@@ -126,9 +134,9 @@ docker_default_containers()
         echo -e "\e[1;36m> Containers config added...\e[0m"
         rm -rf ./inst_2_temp
         touch ./inst_3_temp
-        sleep 3s
-        source ~/.bashrc
 
+        #Reload shell
+        shell_reload
     }
 
 # Pull containers
@@ -137,24 +145,13 @@ docker_pull_containers()
         echo -e "\e[1;36m> Pulling containers...\e[0m"
         cd $docker_dir
         docker-compose up -d
-        docker-compose stop && sudo docker-compose rm
-        docker-compose up -d
+        echo -e "\e[1;36m> Done!!!...\e[0m"
+        echo 
+        echo -e "\e[1;36m> Cleaning up...\e[0m"
+        docker system prune && docker image prune && docker volume prune
         cd $CURRENT_DIR
 
     }
-
-# Pull containers
-docker_pull_containers_test()
-	{
-        echo -e "\e[1;36m> Pulling containers...\e[0m"
-        cd $docker_dir
-        docker-compose up -d
-        #docker-compose stop && sudo docker-compose rm
-        #docker-compose up -d
-        cd $CURRENT_DIR
-
-    }    
-    
 
 # Docker Installation
 test_env_set()
@@ -167,6 +164,14 @@ test_env_set()
         read
  
 	}
+
+ shell_reload()
+	{
+        sleep 3s
+		chmod +x $BASH_SOURCE
+		exec ./ou_installer.sh
+
+    }   
 
 #script Updater
 gh_updater_mod()
@@ -196,7 +201,8 @@ gh_updater_mod()
 		echo
         echo -e "\e[1;36mScript updated, reloading now...\e[0m"
 		sleep 3s
-        . ~/.bash_profile
+		chmod +x $BASH_SOURCE
+		exec ./ou_installer.sh
 	}
 
 show_menus() 
@@ -214,7 +220,7 @@ show_menus()
 		fi
 
         if [ -e "./inst_3_temp" ]; then
-        #docker_pull_containers
+        docker_pull_containers
         sleep 3s
         clear
 		fi
@@ -249,9 +255,7 @@ show_menus()
             touch ./inst_2_temp
             script_prereq
             docker_install
-            sleep 3s
-		    chmod +x $BASH_SOURCE
-		    exec ./install.sh
+            shell_reload
             docker_default_containers
             rm -rf ./inst_3_temp
                 	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
