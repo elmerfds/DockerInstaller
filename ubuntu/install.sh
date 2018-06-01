@@ -147,7 +147,7 @@ gh_updater_mod()
 
 show_menus() 
 	{
-	    if [ -e "./inst_a" ]; then
+	    if [ -e "./inst_temp" ]; then
         docker_env_set
         sleep 3s
         clear
