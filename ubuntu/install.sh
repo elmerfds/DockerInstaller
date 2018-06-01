@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.36.0
+version=v0.37.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -262,10 +262,10 @@ show_menus()
 
 
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-		echo -e " 	  \e[1;36mDocker- INSTALLER $version  \e[0m"
+		echo -e " 	  \e[1;36mDOCKER - INSTALLER $version  \e[0m"
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo " 1. Install Docker + Docker Compose  " 
-		echo " 2. Install Docker/Docker Compose + Containers [Coming Soon] "
+		echo " 2. Install Docker/Docker Compose + Containers"
         echo " 3. Update Docker Container Config "
         echo " 4. Docker Image Cleanup "        
         echo " 5. Script Updater "
