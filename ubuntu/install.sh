@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.37.0
+version=v0.41.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -156,8 +156,7 @@ docker_cont_config_update()
 	{
         echo -e "\e[1;36m> Updating container config...\e[0m"
         cd $docker_dir
-        echo
-        echo -e "\e[1;34m> docker-compose up -d\e[0m"
+        echo -e "\e[1;34m$ docker-compose up -d\e[0m"
         echo
         docker-compose up -d
         echo
@@ -170,8 +169,7 @@ docker_img_cleanup()
 	{
         echo -e "\e[1;36m> Cleaning up...\e[0m"
         cd $docker_dir
-        echo
-        echo -e "\e[1;34m> docker system prune && docker image prune && docker volume prune\e[0m"
+        echo -e "\e[1;34m$ docker system prune && docker image prune && docker volume prune\e[0m"
         echo
         docker system prune && docker image prune && docker volume prune
         echo
@@ -179,7 +177,33 @@ docker_img_cleanup()
         echo 
         cd $CURRENT_DIR
 
-    }               
+    }      
+
+docker_logs()
+	{
+        echo -e "\e[1;36m> List all logs? [A]\e[0m"
+        echo -e "\e[1;36m> Specific Container Logs? [S]\e[0m"
+        read -r logs_type
+	    if [ $logs_type = "A" ] || [ $logs_type = "a" ]; 
+        then
+        cd $docker_dir
+		docker-compose logs
+        echo
+	
+        elif [ $logs_type = "S" ] || [ $logs_type = "s" ];
+        then
+        cd $docker_dir
+        echo        
+        sudo docker-compose images
+        echo
+        echo -e "\e[1;36m> Enter container name [A]\e[0m"
+        read -r container_name
+        docker logs $container_name
+        fi
+        echo 
+        cd $CURRENT_DIR
+
+    }             
         
 
 # Debug env vars
@@ -267,9 +291,10 @@ show_menus()
 		echo " 1. Install Docker + Docker Compose  " 
 		echo " 2. Install Docker/Docker Compose + Containers"
         echo " 3. Update Docker Container Config "
-        echo " 4. Docker Image Cleanup "        
-        echo " 5. Script Updater "
-        echo " 8. Quit		 "
+        echo " 4. Docker Image Cleanup "      
+        echo " 5. Docker Logs "  
+        echo " 6. Script Updater "
+        echo " 9. Quit		 "
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo
 		printf "\e[1;36m> Enter your choice: \e[0m"
@@ -283,46 +308,57 @@ show_menus()
             echo
             script_prereq
             docker_install
-                	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;;
 
 	 	"2")
 			echo "- Your choice 2: Install Docker/Docker Compose + Containers [coming soon]"
+            echo
             touch ./inst_2_temp
             script_prereq
             docker_install
             shell_reload
             docker_default_containers
             rm -rf ./inst_3_temp
-                	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;; 
 
 	 	"3")
 			echo "- Your choice 3: Update Docker Container Config"
+            echo
             docker_cont_config_update
 			echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;;
 
 	 	"4")
-			echo "- Your choice 3: Docker Image Cleanup"
+			echo "- Your choice 4: Docker Image Cleanup"
+            echo
             docker_img_cleanup
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
-		;;        
-        
+		;;
+
 	 	"5")
+			echo "- Your choice 5: Docker Logs"
+            echo
+            docker_logs
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
+			read
+		;;            
+        
+	 	"6")
 	        gh_updater_mod
 		;;
 
-	 	"6")
+	 	"7")
             test_env_set
             read
 		;;        
 
-		"7")
+		"8")
 			while true 
 			do
 			clear
@@ -331,7 +367,7 @@ show_menus()
 			done
 		;;
         
-		"8")
+		"9")
 			exit 0
 		;;
 
