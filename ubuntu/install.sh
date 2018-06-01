@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.34.0
+version=v0.36.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -157,7 +157,8 @@ docker_cont_config_update()
         echo -e "\e[1;36m> Updating container config...\e[0m"
         cd $docker_dir
         echo
-        echo -e "\e[1;36m> docker-compose up -d\e[0m"
+        echo -e "\e[1;34m> docker-compose up -d\e[0m"
+        echo
         docker-compose up -d
         echo
         echo -e "\e[1;36m> Done!!!...\e[0m"
@@ -170,7 +171,8 @@ docker_img_cleanup()
         echo -e "\e[1;36m> Cleaning up...\e[0m"
         cd $docker_dir
         echo
-        echo -e "\e[1;36m> docker system prune && docker image prune && docker volume prune\e[0m"
+        echo -e "\e[1;34m> docker system prune && docker image prune && docker volume prune\e[0m"
+        echo
         docker system prune && docker image prune && docker volume prune
         echo
         echo -e "\e[1;36m> Done!!!...\e[0m"
