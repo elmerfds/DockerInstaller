@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.30.0
+version=v0.30.1
 
 #Script Requirements
 prereqname=('Curl' )
@@ -142,6 +142,18 @@ docker_pull_containers()
         cd $CURRENT_DIR
 
     }
+
+# Pull containers
+docker_pull_containers_test()
+	{
+        echo -e "\e[1;36m> Pulling containers...\e[0m"
+        cd $docker_dir
+        docker-compose up -d
+        #docker-compose stop && sudo docker-compose rm
+        #docker-compose up -d
+        cd $CURRENT_DIR
+
+    }    
     
 
 # Docker Installation
@@ -202,7 +214,7 @@ show_menus()
 		fi
 
         if [ -e "./inst_3_temp" ]; then
-        docker_pull_containers
+        #docker_pull_containers
         sleep 3s
         clear
 		fi
@@ -254,7 +266,8 @@ show_menus()
 		;;
         
 	 	"6")
-	        default_container_names
+            docker_pull_containers_test
+	        #default_container_names
             read
 		;;
 
