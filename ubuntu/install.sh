@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.25.0
+version=v0.26.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -124,9 +124,9 @@ docker_default_containers()
 	    cp $CURRENT_DIR/config/docker-compose.yml $docker_dir
         cp $CURRENT_DIR/config/apps/guacamole/initdb.sql $docker_init
         echo -e "\e[1;36m> Containers config added...\e[0m"
-        cd docker_dir
+        cd $docker_dir
         docker-compose up -d
-        cd CURRENT_DIR
+        cd $CURRENT_DIR
 
     }
     
