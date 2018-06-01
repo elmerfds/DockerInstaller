@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.23.0
+version=v0.24.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -18,6 +18,7 @@ ubu_code=$(cut -d: -f2 < <(lsb_release -c)| xargs)
 docker_dir='/opt/docker'
 docker_data='/opt/docker/data'
 docker_init='/opt/docker/init'
+CURRENT_DIR=`dirname $0`
 
 #Modules
 
