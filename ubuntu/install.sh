@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.40.1
+version=v0.41.0
 
 #Script Requirements
 prereqname=('Curl' )
