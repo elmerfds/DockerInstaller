@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.40.0
+version=v0.40.1
 
 #Script Requirements
 prereqname=('Curl' )
@@ -199,6 +199,7 @@ docker_logs()
         echo -e "\e[1;36m> Enter container name [A]\e[0m"
         read -r container_name
         docker logs $container_name
+        fi
         echo 
         cd $CURRENT_DIR
 
