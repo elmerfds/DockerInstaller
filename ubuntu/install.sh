@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.31.7
+version=v0.31.8
 
 #Script Requirements
 prereqname=('Curl' )
@@ -105,15 +105,13 @@ docker_install()
 docker_env_set()
 	{
         echo -e "\e[1;36m> Setting Docker environment variables...\e[0m"
-        echo '
-        PUID=$uid
-        PGID=$ugp
-        TZ="$tzone"
-        USERDIR="/home/$(logname)"
-        ROOTDIR="/opt/docker"
-        DATADIR="/opt/docker/data"
-        MYSQL_ROOT_PASSWORD="changeMe!"
-        ' >> /etc/environment
+        echo 'PUID=$uid' >> /etc/environment
+        echo 'PGID=$ugp' >> /etc/environment
+        echo 'TZ="$tzone"' >> /etc/environment
+        echo 'USERDIR=/home/$(logname)"' >> /etc/environment
+        echo 'ROOTDIR="/opt/docker"' >> /etc/environment
+        echo 'DATADIR="/opt/docker/data"' >> /etc/environment
+        echo 'MYSQL_ROOT_PASSWORD="changeMe!"' >> /etc/environment
 
 	    if [ ! -d "$docker_data" ]; then
 		mkdir -p $docker_data
