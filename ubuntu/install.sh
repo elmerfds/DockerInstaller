@@ -158,15 +158,6 @@ read_options(){
 			read
 		;;
         
-	 	"4")
-			echo "- Your choice 4: Organizr Complete Install (Org + Requirements) "
-	        	orgreq_mod
-			echo -e "\e[1;36m> \e[0mPress any key to continue with Organizr + Nginx site config"
-			read
-                	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
-			read
-		;;
-
 	 	"5")
 	        	oui_updater_mod
 		;;
