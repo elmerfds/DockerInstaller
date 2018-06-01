@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.27.0
+version=v0.28.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -137,6 +137,8 @@ docker_pull_containers()
 	{
         echo -e "\e[1;36m> Pulling containers...\e[0m"
         cd $docker_dir
+        docker-compose up -d
+        docker-compose stop && sudo docker-compose rm
         docker-compose up -d
         cd $CURRENT_DIR
 
