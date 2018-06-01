@@ -148,6 +148,7 @@ docker_pull_containers()
         echo -e "\e[1;36m> Done!!!...\e[0m"
         echo 
         cd $CURRENT_DIR
+        rm -rf ./inst_3_temp
 
     }
 
