@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.0.15
+version=v0.0.20
 
 #Script Requirements
 prereqname=('Curl' )
@@ -114,7 +114,7 @@ test_env_set()
 	}
 
 #script Updater
-oui_updater_mod()
+gh_updater_mod()
 	{
 			echo
 			echo "Which branch do you want to pull?"
@@ -157,6 +157,7 @@ show_menus()
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo " 1. Install Docker + Docker Compose  " 
 		echo " 2. Install Docker/Docker Compose + Containers [Coming Soon] "
+        echo " 5. Script Updater "
         echo " 7. Quit		 "
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo
@@ -190,7 +191,7 @@ read_options(){
 		;;
         
 	 	"5")
-	        	oui_updater_mod
+	        	gh_updater_mod
 		;;
 
 		"6")
