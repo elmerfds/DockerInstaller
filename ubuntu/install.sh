@@ -76,7 +76,7 @@ docker_install()
 
         sleep 3s
 		chmod +x $BASH_SOURCE
-		exec ./installer.sh
+		exec ./install.sh
 	}
 
 # Docker Variables and Folders
@@ -113,7 +113,37 @@ test_env_set()
  
 	}
 
+#script Updater
+oui_updater_mod()
+	{
+			echo
+			echo "Which branch do you want to pull?"
+			echo "- [1] = Master [2] = Dev [3] = Exp"
+			read -r gh_branch_no
+			echo
 
+			if [ $gh_branch_no = "1" ]
+			then 
+			gh_branch_name=master
+				
+			elif [ $gh_branch_no = "2" ]
+			then 
+			gh_branch_name=dev
+	
+			elif [ $gh_branch_no = "3" ]
+			then 
+			gh_branch_name=exp
+			fi
+
+		    	git fetch --all
+			git reset --hard origin/$gh_branch_name
+			git pull origin $gh_branch_name
+			echo
+                	echo -e "\e[1;36mScript updated, reloading now...\e[0m"
+			sleep 3s
+			chmod +x $BASH_SOURCE
+			exec ./install.sh
+	}
 
 show_menus() 
 	{
@@ -146,7 +176,8 @@ read_options(){
 
 	 	"2")
 			echo "- Your choice 2: Install Docker/Docker Compose + Containers [coming soon]"
-           
+            script_prereq
+            docker_install
                 	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;; 
