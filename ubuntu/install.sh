@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.0.15
+version=v0.0.20
 
 #Script Requirements
 prereqname=('Curl' )
@@ -76,7 +76,7 @@ docker_install()
 
         sleep 3s
 		chmod +x $BASH_SOURCE
-		exec ./installer.sh
+		exec ./install.sh
 	}
 
 # Docker Variables and Folders
@@ -113,7 +113,37 @@ test_env_set()
  
 	}
 
+#script Updater
+gh_updater_mod()
+	{
+			echo
+			echo "Which branch do you want to pull?"
+			echo "- [1] = Master [2] = Dev [3] = Exp"
+			read -r gh_branch_no
+			echo
 
+			if [ $gh_branch_no = "1" ]
+			then 
+			gh_branch_name=master
+				
+			elif [ $gh_branch_no = "2" ]
+			then 
+			gh_branch_name=dev
+	
+			elif [ $gh_branch_no = "3" ]
+			then 
+			gh_branch_name=exp
+			fi
+
+		    	git fetch --all
+			git reset --hard origin/$gh_branch_name
+			git pull origin $gh_branch_name
+			echo
+                	echo -e "\e[1;36mScript updated, reloading now...\e[0m"
+			sleep 3s
+			chmod +x $BASH_SOURCE
+			exec ./install.sh
+	}
 
 show_menus() 
 	{
@@ -127,6 +157,7 @@ show_menus()
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo " 1. Install Docker + Docker Compose  " 
 		echo " 2. Install Docker/Docker Compose + Containers [Coming Soon] "
+        echo " 5. Script Updater "
         echo " 7. Quit		 "
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo
@@ -146,7 +177,8 @@ read_options(){
 
 	 	"2")
 			echo "- Your choice 2: Install Docker/Docker Compose + Containers [coming soon]"
-           
+            script_prereq
+            docker_install
                 	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;; 
@@ -159,7 +191,7 @@ read_options(){
 		;;
         
 	 	"5")
-	        	oui_updater_mod
+	        	gh_updater_mod
 		;;
 
 		"6")
