@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.37.0
+version=v0.38.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -156,7 +156,6 @@ docker_cont_config_update()
 	{
         echo -e "\e[1;36m> Updating container config...\e[0m"
         cd $docker_dir
-        echo
         echo -e "\e[1;34m> docker-compose up -d\e[0m"
         echo
         docker-compose up -d
@@ -170,7 +169,6 @@ docker_img_cleanup()
 	{
         echo -e "\e[1;36m> Cleaning up...\e[0m"
         cd $docker_dir
-        echo
         echo -e "\e[1;34m> docker system prune && docker image prune && docker volume prune\e[0m"
         echo
         docker system prune && docker image prune && docker volume prune
@@ -283,24 +281,26 @@ show_menus()
             echo
             script_prereq
             docker_install
-                	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;;
 
 	 	"2")
 			echo "- Your choice 2: Install Docker/Docker Compose + Containers [coming soon]"
+            echo
             touch ./inst_2_temp
             script_prereq
             docker_install
             shell_reload
             docker_default_containers
             rm -rf ./inst_3_temp
-                	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;; 
 
 	 	"3")
 			echo "- Your choice 3: Update Docker Container Config"
+            echo
             docker_cont_config_update
 			echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
@@ -308,6 +308,7 @@ show_menus()
 
 	 	"4")
 			echo "- Your choice 3: Docker Image Cleanup"
+            echo
             docker_img_cleanup
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
