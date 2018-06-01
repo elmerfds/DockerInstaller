@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.31.0
+version=v0.31.5
 
 #Script Requirements
 prereqname=('Curl' )
@@ -147,11 +147,32 @@ docker_pull_containers()
         docker-compose up -d
         echo -e "\e[1;36m> Done!!!...\e[0m"
         echo 
-        echo -e "\e[1;36m> Cleaning up...\e[0m"
-        docker system prune && docker image prune && docker volume prune
         cd $CURRENT_DIR
 
     }
+
+docker_cont_config_update()
+	{
+        echo -e "\e[1;36m> Updating container config...\e[0m"
+        cd $docker_dir
+        docker-compose up -d
+        echo -e "\e[1;36m> Done!!!...\e[0m"
+        echo 
+        cd $CURRENT_DIR
+
+    }
+
+docker_img_cleanup()
+	{
+        echo -e "\e[1;36m> Cleaning up...\e[0m"
+        cd $docker_dir
+        docker system prune && docker image prune && docker volume prune
+        echo -e "\e[1;36m> Done!!!...\e[0m"
+        echo 
+        cd $CURRENT_DIR
+
+    }               
+        
 
 # Docker Installation
 test_env_set()
@@ -161,6 +182,15 @@ test_env_set()
         echo "docker group = $ugp"
         echo "Ubuntu Codename = $ubu_code"
         echo "branch_test = $branch"
+        echo
+        echo "Testing TEMP ENV variables"
+        echo "export PUID=$uid"
+        echo "export PGID=$ugp"
+        echo "export TZ="$tzone""
+        echo "export USERDIR="/home/$(logname)""
+        echo "export ROOTDIR="/opt/docker""
+        echo "export DATADIR="/opt/docker/data""
+        echo "export MYSQL_ROOT_PASSWORD="changeMe!""
         read
  
 	}
@@ -200,9 +230,7 @@ gh_updater_mod()
 		git pull origin $gh_branch_name
 		echo
         echo -e "\e[1;36mScript updated, reloading now...\e[0m"
-		sleep 3s
-		chmod +x $BASH_SOURCE
-		exec ./install.sh
+        shell_reload
 	}
 
 show_menus() 
@@ -220,6 +248,7 @@ show_menus()
 		fi
 
         if [ -e "./inst_3_temp" ]; then
+        test_env_set
         docker_pull_containers
         sleep 3s
         clear
@@ -231,8 +260,10 @@ show_menus()
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo " 1. Install Docker + Docker Compose  " 
 		echo " 2. Install Docker/Docker Compose + Containers [Coming Soon] "
+        echo " 3. Update Docker Container Config "
+        echo " 4. Docker Image Cleanup "        
         echo " 5. Script Updater "
-        echo " 7. Quit		 "
+        echo " 8. Quit		 "
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo
 		printf "\e[1;36m> Enter your choice: \e[0m"
@@ -263,23 +294,29 @@ show_menus()
 		;; 
 
 	 	"3")
-			echo "- Your choice 3: Testing variables"
-			 test_env_set
-                	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
+			echo "- Your choice 3: Update Docker Container Config"
+            docker_cont_config_update
+			echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;;
-        
-	 	"6")
-            docker_pull_containers_test
-	        #default_container_names
-            read
-		;;
 
+	 	"4")
+			echo "- Your choice 3: Docker Image Cleanup"
+            docker_img_cleanup
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
+			read
+		;;        
+        
 	 	"5")
 	        gh_updater_mod
 		;;
 
-		"6")
+	 	"6")
+            test_env_set
+            read
+		;;        
+
+		"7")
 			while true 
 			do
 			clear
@@ -287,8 +324,8 @@ show_menus()
 			uti_options
 			done
 		;;
-
-		"7")
+        
+		"8")
 			exit 0
 		;;
 
