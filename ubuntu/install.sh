@@ -21,11 +21,11 @@ docker_init='/opt/docker/init'
 # Script Requirements
 script_prereq()
     {
-                echo
-                echo -e "\e[1;36m> Updating apt repositories...\e[0m"
+        echo
+        echo -e "\e[1;36m> Updating apt repositories...\e[0m"
 		echo
 		apt-get update	    
-                echo
+        echo
 		for ((i=0; i < "${#prereqname[@]}"; i++)) 
 		do
 		    echo -e "\e[1;36m> Installing ${prereqname[$i]}...\e[0m"
@@ -82,7 +82,7 @@ docker_install()
 # Docker Variables and Folders
 docker_env_set()
 	{
-        echo -e "\e[1;36m> Environment Section...\e[0m"
+        echo -e "\e[1;36m> Setting Docker environment variables...\e[0m"
         echo "PUID=$uid" >> /etc/environment
         echo "PGID=$ugp" >> /etc/environment
         echo "TZ="$tzone"" >> /etc/environment
@@ -116,33 +116,33 @@ test_env_set()
 #script Updater
 gh_updater_mod()
 	{
-			echo
-			echo "Which branch do you want to pull?"
-			echo "- [1] = Master [2] = Dev [3] = Exp"
-			read -r gh_branch_no
-			echo
+		echo
+		echo "Which branch do you want to pull?"
+		echo "- [1] = Master [2] = Dev [3] = Exp"
+		read -r gh_branch_no
+		echo
 
-			if [ $gh_branch_no = "1" ]
-			then 
-			gh_branch_name=master
+		if [ $gh_branch_no = "1" ]
+		then 
+		gh_branch_name=master
 				
-			elif [ $gh_branch_no = "2" ]
-			then 
-			gh_branch_name=dev
+		elif [ $gh_branch_no = "2" ]
+		then 
+		gh_branch_name=dev
 	
-			elif [ $gh_branch_no = "3" ]
-			then 
-			gh_branch_name=exp
-			fi
+		elif [ $gh_branch_no = "3" ]
+		then 
+		gh_branch_name=exp
+		fi
 
-		    	git fetch --all
-			git reset --hard origin/$gh_branch_name
-			git pull origin $gh_branch_name
-			echo
-                	echo -e "\e[1;36mScript updated, reloading now...\e[0m"
-			sleep 3s
-			chmod +x $BASH_SOURCE
-			exec ./install.sh
+		git fetch --all
+		git reset --hard origin/$gh_branch_name
+		git pull origin $gh_branch_name
+		echo
+        echo -e "\e[1;36mScript updated, reloading now...\e[0m"
+		sleep 3s
+		chmod +x $BASH_SOURCE
+		exec ./install.sh
 	}
 
 show_menus() 
@@ -163,7 +163,7 @@ show_menus()
 		echo
 		printf "\e[1;36m> Enter your choice: \e[0m"
 	}
-read_options(){
+        read_options(){
 		read -r options
 
 		case $options in
@@ -191,7 +191,7 @@ read_options(){
 		;;
         
 	 	"5")
-	        	gh_updater_mod
+	        gh_updater_mod
 		;;
 
 		"6")
