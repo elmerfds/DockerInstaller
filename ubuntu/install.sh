@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.0.20
+version=v0.21.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -42,7 +42,6 @@ script_prereq()
 # Docker Installation
 docker_install()
 	{
-        echo "- Your choice: 1. Docker and Docker Compose Install"
         #add docker source
         touch /etc/apt/sources.list.d/docker.list
 		if [ $ubu_code = "bionic" ]
@@ -169,6 +168,7 @@ show_menus()
 		case $options in
 	 	"1")
 			echo "- Your choice: 1. Install Docker & Docker Compose"
+            echo
             script_prereq
             docker_install
                 	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
