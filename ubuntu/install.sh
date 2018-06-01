@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.21.0
+version=v0.23.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -177,6 +177,14 @@ show_menus()
         sleep 3s
         clear
 		fi
+
+        if [ -e "./inst_2_temp" ]; then
+        docker_default_containers
+        sleep 3s
+        clear
+		fi
+
+
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo -e " 	  \e[1;36mDocker- INSTALLER $version  \e[0m"
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -203,9 +211,11 @@ show_menus()
 
 	 	"2")
 			echo "- Your choice 2: Install Docker/Docker Compose + Containers [coming soon]"
+            touch ./inst_2_temp
             script_prereq
             docker_install
             docker_default_containers
+            rm -rf ./inst_2_temp
                 	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;; 
