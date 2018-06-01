@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.28.0
+version=v0.29.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -127,8 +127,7 @@ docker_default_containers()
         rm -rf ./inst_2_temp
         touch ./inst_3_temp
         sleep 3s
-		chmod +x $BASH_SOURCE
-		exec ./install.sh
+        source ~/.bashrc
 
     }
 
