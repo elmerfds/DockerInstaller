@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.29.0
+version=v0.30.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -184,8 +184,7 @@ gh_updater_mod()
 		echo
         echo -e "\e[1;36mScript updated, reloading now...\e[0m"
 		sleep 3s
-		chmod +x $BASH_SOURCE
-		exec ./install.sh
+        . ~/.bash_profile
 	}
 
 show_menus() 
