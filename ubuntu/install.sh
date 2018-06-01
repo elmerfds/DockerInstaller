@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.29.0
+version=v0.37.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -13,12 +13,22 @@ container_name=('Portainer' 'Watchtower' 'PHPmyadmin' 'Mariadb' 'Organizr' 'Post
 #Script config variables
 tzone=$(cat /etc/timezone)
 uid=$(id -u $(logname))
+user_home_dir="/home/$(logname)"
 ugp=$(cut -d: -f3 < <(getent group docker))
 ubu_code=$(cut -d: -f2 < <(lsb_release -c)| xargs)
 docker_dir='/opt/docker'
 docker_data='/opt/docker/data'
 docker_init='/opt/docker/init'
 CURRENT_DIR=`dirname $0`
+
+#Temp env variables 
+export PUID=$uid
+export PGID=$ugp
+export TZ="$tzone"
+export USERDIR="/home/$(logname)"
+export ROOTDIR="/opt/docker"
+export DATADIR="/opt/docker/data"
+export MYSQL_ROOT_PASSWORD="changeMe!"
 
 #Modules
 
@@ -88,9 +98,8 @@ docker_install()
         #install maintainer
         touch ./inst_temp
 
-        sleep 3s
-		chmod +x $BASH_SOURCE
-		exec ./install.sh
+        #Reloading Shell, to get docker group id
+        shell_reload
 	}
 
 # Docker Variables and Folders
@@ -99,11 +108,11 @@ docker_env_set()
         echo -e "\e[1;36m> Setting Docker environment variables...\e[0m"
         echo "PUID=$uid" >> /etc/environment
         echo "PGID=$ugp" >> /etc/environment
-        echo "TZ="$tzone"" >> /etc/environment
-        echo "USERDIR=/home/$(logname)" >> /etc/environment
-        echo "ROOTDIR="/opt/docker"" >> /etc/environment
-        echo "DATADIR="/opt/docker/data"" >> /etc/environment
-        echo "MYSQL_ROOT_PASSWORD="changeMe!"" >> /etc/environment
+        echo 'TZ="'"$tzone"'"' >> /etc/environment
+        echo 'USERDIR="'"/home/$(logname)"'"' >> /etc/environment
+        echo 'ROOTDIR="'"$docker_dir"'"' >> /etc/environment
+        echo 'DATADIR="'"$docker_data"'"' >> /etc/environment
+        echo 'MYSQL_ROOT_PASSWORD="changeMe!"' >> /etc/environment
 
 	    if [ ! -d "$docker_data" ]; then
 		mkdir -p $docker_data
@@ -126,9 +135,8 @@ docker_default_containers()
         echo -e "\e[1;36m> Containers config added...\e[0m"
         rm -rf ./inst_2_temp
         touch ./inst_3_temp
-        sleep 3s
-        source ~/.bashrc
-
+        #Reload shell
+        shell_reload
     }
 
 # Pull containers
@@ -137,14 +145,44 @@ docker_pull_containers()
         echo -e "\e[1;36m> Pulling containers...\e[0m"
         cd $docker_dir
         docker-compose up -d
-        docker-compose stop && sudo docker-compose rm
-        docker-compose up -d
+        echo -e "\e[1;36m> Done!!!...\e[0m"
+        echo 
         cd $CURRENT_DIR
+        rm -rf ./inst_3_temp
 
     }
-    
 
-# Docker Installation
+docker_cont_config_update()
+	{
+        echo -e "\e[1;36m> Updating container config...\e[0m"
+        cd $docker_dir
+        echo
+        echo -e "\e[1;34m> docker-compose up -d\e[0m"
+        echo
+        docker-compose up -d
+        echo
+        echo -e "\e[1;36m> Done!!!...\e[0m"
+        echo 
+        cd $CURRENT_DIR
+    }
+
+docker_img_cleanup()
+	{
+        echo -e "\e[1;36m> Cleaning up...\e[0m"
+        cd $docker_dir
+        echo
+        echo -e "\e[1;34m> docker system prune && docker image prune && docker volume prune\e[0m"
+        echo
+        docker system prune && docker image prune && docker volume prune
+        echo
+        echo -e "\e[1;36m> Done!!!...\e[0m"
+        echo 
+        cd $CURRENT_DIR
+
+    }               
+        
+
+# Debug env vars
 test_env_set()
 	{
         echo "timezone = $tzone"
@@ -152,9 +190,24 @@ test_env_set()
         echo "docker group = $ugp"
         echo "Ubuntu Codename = $ubu_code"
         echo "branch_test = $branch"
-        read
- 
+        echo
+        echo "Testing TEMP ENV variables"
+        echo "export PUID=$uid"
+        echo "export PGID=$ugp"
+        echo "export TZ="$tzone""
+        echo "export USERDIR="/home/$(logname)""
+        echo "export ROOTDIR="/opt/docker""
+        echo "export DATADIR="/opt/docker/data""
+        echo "export MYSQL_ROOT_PASSWORD="changeMe!""
+        read 
 	}
+
+ shell_reload()
+	{
+        sleep 3s
+		chmod +x $BASH_SOURCE
+		exec ./install.sh
+    }   
 
 #script Updater
 gh_updater_mod()
@@ -183,9 +236,7 @@ gh_updater_mod()
 		git pull origin $gh_branch_name
 		echo
         echo -e "\e[1;36mScript updated, reloading now...\e[0m"
-		sleep 3s
-		chmod +x $BASH_SOURCE
-		exec ./install.sh
+        shell_reload
 	}
 
 show_menus() 
@@ -203,6 +254,7 @@ show_menus()
 		fi
 
         if [ -e "./inst_3_temp" ]; then
+        #test_env_set #debug
         docker_pull_containers
         sleep 3s
         clear
@@ -210,12 +262,14 @@ show_menus()
 
 
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-		echo -e " 	  \e[1;36mDocker- INSTALLER $version  \e[0m"
+		echo -e " 	  \e[1;36mDOCKER - INSTALLER $version  \e[0m"
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo " 1. Install Docker + Docker Compose  " 
-		echo " 2. Install Docker/Docker Compose + Containers [Coming Soon] "
+		echo " 2. Install Docker/Docker Compose + Containers"
+        echo " 3. Update Docker Container Config "
+        echo " 4. Docker Image Cleanup "        
         echo " 5. Script Updater "
-        echo " 7. Quit		 "
+        echo " 8. Quit		 "
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo
 		printf "\e[1;36m> Enter your choice: \e[0m"
@@ -238,9 +292,7 @@ show_menus()
             touch ./inst_2_temp
             script_prereq
             docker_install
-            sleep 3s
-		    chmod +x $BASH_SOURCE
-		    exec ./install.sh
+            shell_reload
             docker_default_containers
             rm -rf ./inst_3_temp
                 	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
@@ -248,22 +300,29 @@ show_menus()
 		;; 
 
 	 	"3")
-			echo "- Your choice 3: Testing variables"
-			 test_env_set
-                	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
+			echo "- Your choice 3: Update Docker Container Config"
+            docker_cont_config_update
+			echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;;
-        
-	 	"6")
-	        default_container_names
-            read
-		;;
 
+	 	"4")
+			echo "- Your choice 3: Docker Image Cleanup"
+            docker_img_cleanup
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
+			read
+		;;        
+        
 	 	"5")
 	        gh_updater_mod
 		;;
 
-		"6")
+	 	"6")
+            test_env_set
+            read
+		;;        
+
+		"7")
 			while true 
 			do
 			clear
@@ -271,8 +330,8 @@ show_menus()
 			uti_options
 			done
 		;;
-
-		"7")
+        
+		"8")
 			exit 0
 		;;
 
