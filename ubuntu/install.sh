@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.26.0
+version=v0.27.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -124,6 +124,18 @@ docker_default_containers()
 	    cp $CURRENT_DIR/config/docker-compose.yml $docker_dir
         cp $CURRENT_DIR/config/apps/guacamole/initdb.sql $docker_init
         echo -e "\e[1;36m> Containers config added...\e[0m"
+        rm -rf ./inst_2_temp
+        touch ./inst_3_temp
+        sleep 3s
+		chmod +x $BASH_SOURCE
+		exec ./install.sh
+
+    }
+
+# Pull containers
+docker_pull_containers()
+	{
+        echo -e "\e[1;36m> Pulling containers...\e[0m"
         cd $docker_dir
         docker-compose up -d
         cd $CURRENT_DIR
@@ -189,6 +201,12 @@ show_menus()
         clear
 		fi
 
+        if [ -e "./inst_3_temp" ]; then
+        docker_pull_containers
+        sleep 3s
+        clear
+		fi
+
 
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo -e " 	  \e[1;36mDocker- INSTALLER $version  \e[0m"
@@ -219,8 +237,11 @@ show_menus()
             touch ./inst_2_temp
             script_prereq
             docker_install
+            sleep 3s
+		    chmod +x $BASH_SOURCE
+		    exec ./install.sh
             docker_default_containers
-            rm -rf ./inst_2_temp
+            rm -rf ./inst_3_temp
                 	echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;; 
