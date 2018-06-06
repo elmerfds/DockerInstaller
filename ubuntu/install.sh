@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.5
+version=v0.41.6
 
 #Script Requirements
 prereqname=('Curl' )
@@ -208,7 +208,7 @@ docker_logs()
 
 additional_docker_config()
 	{
-        dc_short=({!dc})
+        #dc_short=({!dc})
         echo
         echo -e "\e[1;36m> Optional Docker install config [y/n]\e[0m"       
         echo
@@ -216,9 +216,8 @@ additional_docker_config()
         read -r dc_no_sudo
 	    if [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
         then
-            sudo gpasswd -a $USER docker
+            gpasswd -a $USER docker
             echo "Done!"
-            read
         else
             echo    
             echo "Skipped" 
@@ -226,7 +225,7 @@ additional_docker_config()
 
         echo
         echo -e "\e[1;36m> Do you want to create an env variable ('dc'), so that you can run docker-compose commands from any directory? [y/n]\e[0m"
-        echo "e.g: $dc_short up -d"
+        echo "e.g: $(!dc_short) up -d"
         read -r dc_dcom_var
         if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ];
         then
