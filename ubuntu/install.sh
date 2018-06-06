@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.2
+version=v0.41.4
 
 #Script Requirements
 prereqname=('Curl' )
@@ -149,6 +149,7 @@ docker_pull_containers()
         echo 
         cd $CURRENT_DIR
         rm -rf ./inst_3_temp
+        touch ./inst_4_temp
 
     }
 
@@ -205,7 +206,7 @@ docker_logs()
 
     }             
 
-add_docker_config()
+additional_docker_config()
 	{
         echo
         echo -e "\e[1;36m> Optional Docker install config [y/n]\e[0m"       
@@ -235,9 +236,8 @@ add_docker_config()
         else
             echo "Skipped"
             read
-        fi   
-  
-         
+        fi
+        shell_reload           
 	}        
 
 # Debug env vars
@@ -318,8 +318,15 @@ show_menus()
         clear
 		fi
 
+        if [ -e "./inst_4_temp" ]; then
+        #test_env_set #debug
+        additional_docker_config
+        sleep 3s
+        clear
+		fi
 
-		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
+        echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo -e " 	  \e[1;36mDOCKER - INSTALLER $version  \e[0m"
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo " 1. Install Docker + Docker Compose  " 
@@ -354,7 +361,6 @@ show_menus()
             docker_install
             shell_reload
             docker_default_containers
-            rm -rf ./inst_3_temp
             add_docker_config
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
