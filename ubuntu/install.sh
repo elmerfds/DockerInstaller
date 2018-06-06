@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.1
+version=v0.41.2
 
 #Script Requirements
 prereqname=('Curl' )
@@ -235,6 +235,7 @@ add_docker_config()
         else
             echo "Skipped"
             read
+        fi   
   
          
 	}        
