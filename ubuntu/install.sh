@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.6-8
+version=v0.41.6-9
 
 #Script Requirements
 prereqname=('Curl' )
@@ -248,6 +248,7 @@ additional_docker_config()
         then
             rm -rf ./inst_4_temp
             echo -e "\e[1;36m> \e[0mPress any key to quit the script and refresh login session."
+            printf "\e[1;36m>-\e [0m"    
             read
             su - $SUDO_USER
 
@@ -255,6 +256,7 @@ additional_docker_config()
         then
             rm -rf ./inst_4_temp
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
+		    printf "\e[1;36m>-\e [0m"            
             read
             shell_reload   
         fi
@@ -371,7 +373,6 @@ show_menus()
             echo
             script_prereq
             docker_install
-			read
 		;;
 
 	 	"2")
