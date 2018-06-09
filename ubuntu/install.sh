@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.6-6
+version=v0.41.6-7
 
 #Script Requirements
 prereqname=('Curl' )
@@ -123,10 +123,12 @@ docker_env_set()
 		fi
         rm -rf ./inst_temp
         echo -e "\e[1;36m> Docker variables set...\e[0m"
+
         if [ $options = "1" ]
-		then 
+            then 
             touch ./inst_4_temp 
         fi
+
     }
 
 # Docker Variables and Folders
@@ -284,7 +286,7 @@ test_env_set()
 	{
         sleep 1s
 		chmod +x $BASH_SOURCE
-		exec ./install.sh
+		source ~/.bashrc
     }   
 
 #script Updater
