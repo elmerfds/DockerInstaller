@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.6-4
+version=v0.41.6-5
 
 #Script Requirements
 prereqname=('Curl' )
@@ -234,15 +234,14 @@ additional_docker_config()
             echo 'dc="docker-compose -f '"/opt/docker/docker-compose.yml"'"' >> /etc/environment
             echo "Done!"
             echo
-            echo "You may have to log out and log back in for the changes to take effect."
         else
             echo "Skipped"
         fi
         
-        if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ];
+        if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ] || [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
         then
         rm -rf ./inst_4_temp
-        echo -e "\e[1;36m> \e[0mPress any key to quit the script and refresh login"
+        echo -e "\e[1;36m> \e[0mPress any key to quit the script and refresh login session."
         read
         su - $SUDO_USER
 
@@ -366,6 +365,7 @@ show_menus()
             echo
             script_prereq
             docker_install
+            additional_docker_config
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;;
