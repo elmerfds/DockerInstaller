@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.6-7
+version=v0.41.6-8
 
 #Script Requirements
 prereqname=('Curl' )
@@ -215,7 +215,7 @@ docker_logs()
 additional_docker_config()
 	{
         echo
-        echo -e "\e[1;36m> Optional Docker install config [y/n]\e[0m"       
+        echo -e "\e[1;36m> Optional Docker install config\e[0m"       
         echo
         echo -e "\e[1;36m> Do you want to run docker commands without sudo for the current user? [y/n]\e[0m"
         read -r dc_no_sudo
@@ -371,7 +371,6 @@ show_menus()
             echo
             script_prereq
             docker_install
-            additional_docker_config
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;;
