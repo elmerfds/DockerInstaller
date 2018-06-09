@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.6-2
+version=v0.41.6-3
 
 #Script Requirements
 prereqname=('Curl' )
@@ -216,7 +216,7 @@ additional_docker_config()
         dc_no_sudo=${dc_no_sudo:-y}
 	    if [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
         then
-            gpasswd -a $USER docker
+            gpasswd -a $SUDO_USER docker
             echo "Done!"
         else
             echo    
