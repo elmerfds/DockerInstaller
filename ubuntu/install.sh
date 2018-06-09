@@ -250,6 +250,9 @@ additional_docker_config()
         if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ] || [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
         then
             rm -rf ./inst_4_temp
+            echo
+            echo -e "\e[1;36m> \e[0mDocker Install completed" 
+            echo
             echo -e "\e[1;36m> \e[0mPress any key to quit the script and refresh login session."
             read
             su - $SUDO_USER
@@ -257,13 +260,14 @@ additional_docker_config()
         elif [ $dc_dcom_var = "N" ] || [ $dc_dcom_var = "n" ];
         then
             rm -rf ./inst_4_temp
+            echo
+            echo -e "\e[1;36m> \e[0mDocker Install completed"
+            echo 
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."   
             read
             shell_reload   
         fi
-        echo
-        echo -e "\e[1;36m> \e[0mDocker Install completed" 
-        
+       
 	}        
 
 # Debug env vars
