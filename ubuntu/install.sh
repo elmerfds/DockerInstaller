@@ -254,7 +254,7 @@ additional_docker_config()
         elif [ $dc_dcom_var = "N" ] || [ $dc_dcom_var = "n" ];
         then
             rm -rf ./inst_4_temp
-            echo -e "\e[1;36m> \e[0mPress any key to continue..."
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
             read
             shell_reload   
         fi
@@ -371,7 +371,6 @@ show_menus()
             echo
             script_prereq
             docker_install
-            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;;
 
