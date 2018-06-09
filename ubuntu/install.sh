@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.6
+version=v0.41.6-1
 
 #Script Requirements
 prereqname=('Curl' )
@@ -237,6 +237,7 @@ additional_docker_config()
         fi
         echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
         rm -rf ./inst_4_temp
+        read
         shell_reload           
 	}        
 
