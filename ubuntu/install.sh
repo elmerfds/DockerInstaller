@@ -218,6 +218,7 @@ additional_docker_config()
         echo -e "\e[1;36m> Optional Docker install config\e[0m"       
         echo
         echo -e "\e[1;36m> Do you want to run docker commands without sudo for the current user? [y/n]\e[0m"
+        printf '\e[1;36m- \e[0m'    
         read -r dc_no_sudo
         dc_no_sudo=${dc_no_sudo:-y}
 	    if [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
@@ -232,6 +233,7 @@ additional_docker_config()
         echo
         echo -e "\e[1;36m> Do you want to create an env variable ('dc'), so that you can run docker-compose commands from any directory? [y/n]\e[0m"
         echo "e.g:" '$dc' "up -d"
+        printf '\e[1;36m- \e[0m'    
         read -r dc_dcom_var
         dc_dcom_var=${dc_dcom_var:-y}
         if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ];
@@ -248,15 +250,13 @@ additional_docker_config()
         then
             rm -rf ./inst_4_temp
             echo -e "\e[1;36m> \e[0mPress any key to quit the script and refresh login session."
-            printf "\e[1;36m>-\e [0m"    
             read
             su - $SUDO_USER
 
         elif [ $dc_dcom_var = "N" ] || [ $dc_dcom_var = "n" ];
         then
             rm -rf ./inst_4_temp
-            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
-		    printf "\e[1;36m>-\e [0m"            
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."   
             read
             shell_reload   
         fi
