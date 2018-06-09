@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.6-1
+version=v0.41.6-2
 
 #Script Requirements
 prereqname=('Curl' )
@@ -208,12 +208,12 @@ docker_logs()
 
 additional_docker_config()
 	{
-        #dc_short=({!dc})
         echo
         echo -e "\e[1;36m> Optional Docker install config [y/n]\e[0m"       
         echo
         echo -e "\e[1;36m> Do you want to run docker commands without sudo for the current user? [y/n]\e[0m"
         read -r dc_no_sudo
+        dc_no_sudo=${dc_no_sudo:-y}
 	    if [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
         then
             gpasswd -a $USER docker
@@ -225,8 +225,9 @@ additional_docker_config()
 
         echo
         echo -e "\e[1;36m> Do you want to create an env variable ('dc'), so that you can run docker-compose commands from any directory? [y/n]\e[0m"
-        echo "e.g: $(!dc_short) up -d"
+        echo "e.g:" '$dc' "up -d"
         read -r dc_dcom_var
+        dc_dcom_var=${dc_dcom_var:-y}
         if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ];
         then
             echo
@@ -263,7 +264,7 @@ test_env_set()
 
  shell_reload()
 	{
-        sleep 3s
+        sleep 1s
 		chmod +x $BASH_SOURCE
 		exec ./install.sh
     }   
