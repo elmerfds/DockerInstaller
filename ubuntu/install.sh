@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.6-9
+version=v0.41.7-0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -391,7 +391,7 @@ show_menus()
             docker_install
             shell_reload
             docker_default_containers
-            add_docker_config
+            additional_docker_config
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;; 
