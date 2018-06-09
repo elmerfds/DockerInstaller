@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.6-5
+version=v0.41.6-6
 
 #Script Requirements
 prereqname=('Curl' )
@@ -123,6 +123,10 @@ docker_env_set()
 		fi
         rm -rf ./inst_temp
         echo -e "\e[1;36m> Docker variables set...\e[0m"
+        if [ $options = "1" ]
+		then 
+            touch ./inst_4_temp 
+        fi
     }
 
 # Docker Variables and Folders
@@ -240,17 +244,17 @@ additional_docker_config()
         
         if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ] || [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
         then
-        rm -rf ./inst_4_temp
-        echo -e "\e[1;36m> \e[0mPress any key to quit the script and refresh login session."
-        read
-        su - $SUDO_USER
+            rm -rf ./inst_4_temp
+            echo -e "\e[1;36m> \e[0mPress any key to quit the script and refresh login session."
+            read
+            su - $SUDO_USER
 
         elif [ $dc_dcom_var = "N" ] || [ $dc_dcom_var = "n" ];
         then
-        rm -rf ./inst_4_temp
-        echo -e "\e[1;36m> \e[0mPress any key to continue..."
-        read
-        shell_reload   
+            rm -rf ./inst_4_temp
+            echo -e "\e[1;36m> \e[0mPress any key to continue..."
+            read
+            shell_reload   
         fi
 
         
