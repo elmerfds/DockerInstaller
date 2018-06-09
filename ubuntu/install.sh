@@ -318,7 +318,9 @@ gh_updater_mod()
 		git pull origin $gh_branch_name
 		echo
         echo -e "\e[1;36mScript updated, reloading now...\e[0m"
-        shell_reload
+        sleep 3s
+		chmod +x $BASH_SOURCE
+		exec ./install.sh
 	}
 
 show_menus() 
