@@ -223,6 +223,7 @@ additional_docker_config()
         dc_no_sudo=${dc_no_sudo:-y}
 	    if [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
         then
+            echo
             gpasswd -a $SUDO_USER docker
             echo "Done!"
         else
@@ -260,7 +261,8 @@ additional_docker_config()
             read
             shell_reload   
         fi
-
+        echo
+        echo -e "\e[1;36m> \e[0mDocker Install completed" 
         
 	}        
 
