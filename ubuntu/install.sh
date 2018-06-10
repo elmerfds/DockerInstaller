@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.42.0-3
+version=v0.42.0-4
 
 #Script Requirements
 prereqname=('Curl' )
@@ -286,7 +286,7 @@ additional_docker_config()
             then
                 echo "dcf variable already exists"
             else
-                echo 'dcf='"/opt/docker/docker-compose.yml"'' >> /etc/environment
+                echo 'dcf="'"/opt/docker/docker-compose.yml"'"' >> /etc/environment
             fi   
             echo "Done!"
             echo
