@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.7-8
+version=v0.41.7-9
 
 #Script Requirements
 prereqname=('Curl' )
@@ -94,11 +94,7 @@ docker_install()
         chmod +x /usr/bin/docker-compose
         usermod -aG docker ${USER}
 		echo "- Docker and Docker Compose Installed"
-        echo
-
-        #install maintainer
-        touch ./inst_temp
-        
+        echo     
   
         #Reloading Shell, to get docker group id
         shell_reload
@@ -359,6 +355,8 @@ show_menus()
 	 	"1")
 			echo "- Your choice: 1. Install Docker & Docker Compose"
             echo
+            #install maintainer
+            touch ./inst_temp
             script_prereq
             docker_install
 		;;
@@ -366,6 +364,8 @@ show_menus()
 	 	"2")
 			echo "- Your choice 2: Install Docker/Docker Compose + Containers [coming soon]"
             echo
+            #install maintainer
+            touch ./inst_2_temp
             script_prereq
             docker_install
             source ~/.bashrc
