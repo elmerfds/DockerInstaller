@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.42.0
+version=v0.42.0-5
 
 #Script Requirements
 prereqname=('Curl' )
@@ -94,6 +94,7 @@ docker_install()
         ##Configure docker permissions
         chmod +x /usr/bin/docker-compose
         usermod -aG docker ${USER}
+        echo
 		echo "- Docker and Docker Compose Installed"
         echo     
   
@@ -266,7 +267,8 @@ additional_docker_config()
 
         echo
         echo -e "\e[1;36m> Do you want to create an env variable ('dc'), so that you can run docker-compose commands from any directory? [y/n]\e[0m"
-        echo "e.g:" '$dc' "up -d"
+        echo -e "e.g:" '$dc' "up -d"  "\e[1;36m = docker-compose up -d\e[0m"
+        echo -e "e.g:" '$dcf' "\e[1;36m = /opt/docker/docker-compose.yml \e[0m"
         printf '\e[1;36m- \e[0m'    
         read -r dc_dcom_var
         dc_dcom_var=${dc_dcom_var:-y}
@@ -278,7 +280,13 @@ additional_docker_config()
                 echo "dc variable already exists"
             else
                 echo 'dc="docker-compose -f '"/opt/docker/docker-compose.yml"'"' >> /etc/environment
-            fi  
+            fi
+            if grep -Fxq 'dcf="'"/opt/docker/docker-compose.yml"'"' $env_file 
+            then
+                echo "dcf variable already exists"
+            else
+                echo 'dcf="'"/opt/docker/docker-compose.yml"'"' >> /etc/environment
+            fi   
             echo "Done!"
             echo
         else
@@ -293,7 +301,7 @@ additional_docker_config()
             echo -e "\e[1;36m> \e[0mPress any key to quit the script and refresh login session."
             read
             maintainer_cleanup
-            su - $SUDO_USER
+            sudo -u $SUDO_USER bash --login
 
         elif [ $dc_dcom_var = "N" ] || [ $dc_dcom_var = "n" ];
         then
