@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.8-2
+version=v0.41.8-3
 
 #Script Requirements
 prereqname=('Curl' )
@@ -106,49 +106,49 @@ docker_env_set()
 	{
         echo
         echo -e "\e[1;36m> Setting Docker environment variables...\e[0m"
-        if grep -Fxq "echo "PUID=$uid" >> /etc/environment" $env_file
+        if grep -Fxq '"PUID=$uid"' $env_file
         then
             echo "already exists"
         else
             echo "PUID=$uid" >> /etc/environment
         fi
 
-        if grep -Fxq "echo "PGID=$ugp" >> /etc/environment" $env_file
+        if grep -Fxq '"PGID=$ugp"' $env_file
         then
             echo "already exists"
         else
             echo "PGID=$ugp" >> /etc/environment
         fi
 
-        if grep -Fxq "echo 'TZ="'"$tzone"'"' >> /etc/environment" $env_file
+        if grep -Fxq ''TZ="'"$tzone"'"'' $env_file
         then
             echo "already exists"
         else
             echo 'TZ="'"$tzone"'"' >> /etc/environment
         fi        
         
-        if grep -Fxq "echo 'USERDIR="'"/home/$(logname)"'"' >> /etc/environment" $env_file
+        if grep -Fxq ''USERDIR="'"/home/$(logname)"'"''$env_file
         then
             echo "already exists"
         else
             echo 'USERDIR="'"/home/$(logname)"'"' >> /etc/environment
         fi   
 
-        if grep -Fxq "echo 'ROOTDIR="'"$docker_dir"'"' >> /etc/environment" $env_file
+        if grep -Fxq ''ROOTDIR="'"$docker_dir"'"''$env_file
         then
             echo "already exists"
         else
             echo 'ROOTDIR="'"$docker_dir"'"' >> /etc/environment
         fi           
 
-        if grep -Fxq "echo 'DATADIR="'"$docker_data"'"' >> /etc/environment" $env_file
+        if grep -Fxq ''DATADIR="'"$docker_data"'"'' $env_file
         then
             echo "already exists"
         else
             echo 'DATADIR="'"$docker_data"'"' >> /etc/environment
         fi         
 
-        if grep -Fxq "echo 'MYSQL_ROOT_PASSWORD="changeMe!"' >> /etc/environment" $env_file
+        if grep -Fxq ''MYSQL_ROOT_PASSWORD="changeMe!"'' $env_file
         then
             echo "already exists"
         else
