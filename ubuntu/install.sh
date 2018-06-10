@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.8-0
+version=v0.41.8-1
 
 #Script Requirements
 prereqname=('Curl' )
@@ -20,6 +20,7 @@ docker_dir='/opt/docker'
 docker_data='/opt/docker/data'
 docker_init='/opt/docker/init'
 CURRENT_DIR=`dirname $0`
+env_file="/etc/environment"
 
 #Temp env variables 
 export PUID=$uid
@@ -105,15 +106,56 @@ docker_env_set()
 	{
         echo
         echo -e "\e[1;36m> Setting Docker environment variables...\e[0m"
-        echo "PUID=$uid" >> /etc/environment
-        echo "PGID=$ugp" >> /etc/environment
-        echo 'TZ="'"$tzone"'"' >> /etc/environment
-        echo 'USERDIR="'"/home/$(logname)"'"' >> /etc/environment
-        echo 'ROOTDIR="'"$docker_dir"'"' >> /etc/environment
-        echo 'DATADIR="'"$docker_data"'"' >> /etc/environment
-        echo 'MYSQL_ROOT_PASSWORD="changeMe!"' >> /etc/environment
+        if grep -Fxq "echo "PUID=$uid" >> /etc/environment" $env_file
+        then
+            already exists
+        else
+            echo "PUID=$uid" >> /etc/environment
+        fi
 
-	    if [ ! -d "$docker_data" ]; then
+        if grep -Fxq "echo "PGID=$ugp" >> /etc/environment" $env_file
+        then
+            already exists
+        else
+            echo "PGID=$ugp" >> /etc/environment
+        fi
+
+        if grep -Fxq "echo 'TZ="'"$tzone"'"' >> /etc/environment" $env_file
+        then
+            already exists
+        else
+            echo 'TZ="'"$tzone"'"' >> /etc/environment
+        fi        
+        
+        if grep -Fxq "echo 'USERDIR="'"/home/$(logname)"'"' >> /etc/environment" $env_file
+        then
+            already exists
+        else
+            echo 'USERDIR="'"/home/$(logname)"'"' >> /etc/environment
+        fi   
+
+        if grep -Fxq "echo 'ROOTDIR="'"$docker_dir"'"' >> /etc/environment" $env_file
+        then
+            already exists
+        else
+            echo 'ROOTDIR="'"$docker_dir"'"' >> /etc/environment
+        fi           
+
+        if grep -Fxq "echo 'DATADIR="'"$docker_data"'"' >> /etc/environment" $env_file
+        then
+            already exists
+        else
+            echo 'DATADIR="'"$docker_data"'"' >> /etc/environment
+        fi         
+
+        if grep -Fxq "echo 'MYSQL_ROOT_PASSWORD="changeMe!"' >> /etc/environment" $env_file
+        then
+            already exists
+        else
+            echo 'MYSQL_ROOT_PASSWORD="changeMe!"' >> /etc/environment
+        fi           
+        
+        if [ ! -d "$docker_data" ]; then
 		mkdir -p $docker_data
 		fi
 
