@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.8-3
+version=v0.41.8-4
 
 #Script Requirements
 prereqname=('Curl' )
@@ -106,51 +106,51 @@ docker_env_set()
 	{
         echo
         echo -e "\e[1;36m> Setting Docker environment variables...\e[0m"
-        if grep -Fxq '"PUID=$uid"' $env_file
+        if grep -Fxq "PUID=$uid" $env_file
         then
-            echo "already exists"
+            echo "PUID already exists"
         else
             echo "PUID=$uid" >> /etc/environment
         fi
 
-        if grep -Fxq '"PGID=$ugp"' $env_file
+        if grep -Fxq "PGID=$ugp" $env_file
         then
-            echo "already exists"
+            echo "PGID already exists"
         else
             echo "PGID=$ugp" >> /etc/environment
         fi
 
-        if grep -Fxq ''TZ="'"$tzone"'"'' $env_file
+        if grep -Fxq 'TZ="'"$tzone"'"' $env_file
         then
-            echo "already exists"
+            echo "TZ already exists"
         else
             echo 'TZ="'"$tzone"'"' >> /etc/environment
         fi        
         
-        if grep -Fxq ''USERDIR="'"/home/$(logname)"'"''$env_file
+        if grep -Fxq 'USERDIR="'"/home/$(logname)"'"' $env_file
         then
-            echo "already exists"
+            echo "USERDIR already exists"
         else
             echo 'USERDIR="'"/home/$(logname)"'"' >> /etc/environment
         fi   
 
-        if grep -Fxq ''ROOTDIR="'"$docker_dir"'"''$env_file
+        if grep -Fxq 'ROOTDIR="'"$docker_dir"'"' $env_file
         then
-            echo "already exists"
+            echo "ROOTDIR already exists"
         else
             echo 'ROOTDIR="'"$docker_dir"'"' >> /etc/environment
         fi           
 
-        if grep -Fxq ''DATADIR="'"$docker_data"'"'' $env_file
+        if grep -Fxq 'DATADIR="'"$docker_data"'"' $env_file
         then
-            echo "already exists"
+            echo "DATADIR already exists"
         else
             echo 'DATADIR="'"$docker_data"'"' >> /etc/environment
-        fi         
+        fi               
 
         if grep -Fxq ''MYSQL_ROOT_PASSWORD="changeMe!"'' $env_file
         then
-            echo "already exists"
+            echo "MYSQL_ROOT_PASSWORD already exists"
         else
             echo 'MYSQL_ROOT_PASSWORD="changeMe!"' >> /etc/environment
         fi           
@@ -271,7 +271,12 @@ additional_docker_config()
         if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ];
         then
             echo
-            echo 'dc="docker-compose -f '"/opt/docker/docker-compose.yml"'"' >> /etc/environment
+            if grep -Fxq 'dc="docker-compose -f '"/opt/docker/docker-compose.yml"'"' $env_file
+            then
+                echo "dc variable already exists"
+            else
+                echo 'dc="docker-compose -f '"/opt/docker/docker-compose.yml"'"' >> /etc/environment
+            fi  
             echo "Done!"
             echo
         else
