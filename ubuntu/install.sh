@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.0
+version=v0.41.7-1
 
 #Script Requirements
 prereqname=('Curl' )
@@ -99,7 +99,7 @@ docker_install()
         touch ./inst_temp
 
         #Reloading Shell, to get docker group id
-        shell_reload
+        source ~/.bashrc
 	}
 
 # Docker Variables and Folders
@@ -123,6 +123,12 @@ docker_env_set()
 		fi
         rm -rf ./inst_temp
         echo -e "\e[1;36m> Docker variables set...\e[0m"
+
+        if [ $options = "1" ]
+            then 
+            touch ./inst_4_temp 
+        fi
+
     }
 
 # Docker Variables and Folders
@@ -149,6 +155,7 @@ docker_pull_containers()
         echo 
         cd $CURRENT_DIR
         rm -rf ./inst_3_temp
+        touch ./inst_4_temp
 
     }
 
@@ -204,7 +211,64 @@ docker_logs()
         cd $CURRENT_DIR
 
     }             
+
+additional_docker_config()
+	{
+        echo
+        echo -e "\e[1;36m> Optional Docker install config\e[0m"       
+        echo
+        echo -e "\e[1;36m> Do you want to run docker commands without sudo for the current user? [y/n]\e[0m"
+        printf '\e[1;36m- \e[0m'    
+        read -r dc_no_sudo
+        dc_no_sudo=${dc_no_sudo:-y}
+	    if [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
+        then
+            echo
+            gpasswd -a $SUDO_USER docker
+            echo "Done!"
+        else
+            echo    
+            echo "Skipped" 
+        fi
+
+        echo
+        echo -e "\e[1;36m> Do you want to create an env variable ('dc'), so that you can run docker-compose commands from any directory? [y/n]\e[0m"
+        echo "e.g:" '$dc' "up -d"
+        printf '\e[1;36m- \e[0m'    
+        read -r dc_dcom_var
+        dc_dcom_var=${dc_dcom_var:-y}
+        if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ];
+        then
+            echo
+            echo 'dc="docker-compose -f '"/opt/docker/docker-compose.yml"'"' >> /etc/environment
+            echo "Done!"
+            echo
+        else
+            echo "Skipped"
+        fi
         
+        if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ] || [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
+        then
+            rm -rf ./inst_4_temp
+            echo
+            echo -e "\e[1;36m> \e[0mDocker Install completed" 
+            echo
+            echo -e "\e[1;36m> \e[0mPress any key to quit the script and refresh login session."
+            read
+            su - $SUDO_USER
+
+        elif [ $dc_dcom_var = "N" ] || [ $dc_dcom_var = "n" ];
+        then
+            rm -rf ./inst_4_temp
+            echo
+            echo -e "\e[1;36m> \e[0mDocker Install completed"
+            echo 
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."   
+            read
+            shell_reload   
+        fi
+       
+	}        
 
 # Debug env vars
 test_env_set()
@@ -228,7 +292,7 @@ test_env_set()
 
  shell_reload()
 	{
-        sleep 3s
+        sleep 1s
 		chmod +x $BASH_SOURCE
 		exec ./install.sh
     }   
@@ -260,7 +324,9 @@ gh_updater_mod()
 		git pull origin $gh_branch_name
 		echo
         echo -e "\e[1;36mScript updated, reloading now...\e[0m"
-        shell_reload
+        sleep 3s
+		chmod +x $BASH_SOURCE
+		exec ./install.sh
 	}
 
 show_menus() 
@@ -284,8 +350,15 @@ show_menus()
         clear
 		fi
 
+        if [ -e "./inst_4_temp" ]; then
+        #test_env_set #debug
+        additional_docker_config
+        sleep 3s
+        clear
+		fi
 
-		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
+        echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo -e " 	  \e[1;36mDOCKER - INSTALLER $version  \e[0m"
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo " 1. Install Docker + Docker Compose  " 
@@ -308,8 +381,6 @@ show_menus()
             echo
             script_prereq
             docker_install
-            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
-			read
 		;;
 
 	 	"2")
@@ -320,7 +391,7 @@ show_menus()
             docker_install
             shell_reload
             docker_default_containers
-            rm -rf ./inst_3_temp
+            additional_docker_config
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;; 
