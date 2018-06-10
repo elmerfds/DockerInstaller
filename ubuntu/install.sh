@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.8-4
+version=v0.41.8-5
 
 #Script Requirements
 prereqname=('Curl' )
@@ -106,6 +106,7 @@ docker_env_set()
 	{
         echo
         echo -e "\e[1;36m> Setting Docker environment variables...\e[0m"
+        echo
         if grep -Fxq "PUID=$uid" $env_file
         then
             echo "PUID already exists"
@@ -148,12 +149,12 @@ docker_env_set()
             echo 'DATADIR="'"$docker_data"'"' >> /etc/environment
         fi               
 
-        if grep -Fxq ''MYSQL_ROOT_PASSWORD="changeMe!"'' $env_file
+        if grep -Fxq 'MYSQL_ROOT_PASSWORD="changeMe!"' $env_file
         then
             echo "MYSQL_ROOT_PASSWORD already exists"
         else
             echo 'MYSQL_ROOT_PASSWORD="changeMe!"' >> /etc/environment
-        fi           
+        fi          
         
         if [ ! -d "$docker_data" ]; then
 		mkdir -p $docker_data
@@ -162,6 +163,7 @@ docker_env_set()
 	    if [ ! -d "$docker_init" ]; then
 		mkdir -p $docker_init
 		fi
+        echo
         echo -e "\e[1;36m> Docker variables set...\e[0m"
 
     }
