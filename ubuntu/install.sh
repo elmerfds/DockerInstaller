@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.7-1
+version=v0.41.7-5
 
 #Script Requirements
 prereqname=('Curl' )
@@ -95,9 +95,7 @@ docker_install()
         usermod -aG docker ${USER}
 		echo "- Docker and Docker Compose Installed"
         
-        #install maintainer
-        touch ./inst_temp
-
+  
         #Reloading Shell, to get docker group id
         source ~/.bashrc
 	}
@@ -121,13 +119,7 @@ docker_env_set()
 	    if [ ! -d "$docker_init" ]; then
 		mkdir -p $docker_init
 		fi
-        rm -rf ./inst_temp
         echo -e "\e[1;36m> Docker variables set...\e[0m"
-
-        if [ $options = "1" ]
-            then 
-            touch ./inst_4_temp 
-        fi
 
     }
 
@@ -139,10 +131,8 @@ docker_default_containers()
 	    cp $CURRENT_DIR/config/docker-compose.yml $docker_dir
         cp $CURRENT_DIR/config/apps/guacamole/initdb.sql $docker_init
         echo -e "\e[1;36m> Containers config added...\e[0m"
-        rm -rf ./inst_2_temp
-        touch ./inst_3_temp
         #Reload shell
-        shell_reload
+        source ~/.bashrc
     }
 
 # Pull containers
@@ -154,9 +144,6 @@ docker_pull_containers()
         echo -e "\e[1;36m> Done!!!...\e[0m"
         echo 
         cd $CURRENT_DIR
-        rm -rf ./inst_3_temp
-        touch ./inst_4_temp
-
     }
 
 docker_cont_config_update()
@@ -249,7 +236,6 @@ additional_docker_config()
         
         if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ] || [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
         then
-            rm -rf ./inst_4_temp
             echo
             echo -e "\e[1;36m> \e[0mDocker Install completed" 
             echo
@@ -259,13 +245,12 @@ additional_docker_config()
 
         elif [ $dc_dcom_var = "N" ] || [ $dc_dcom_var = "n" ];
         then
-            rm -rf ./inst_4_temp
             echo
             echo -e "\e[1;36m> \e[0mDocker Install completed"
             echo 
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."   
             read
-            shell_reload   
+            source ~/.bashrc  
         fi
        
 	}        
@@ -331,33 +316,6 @@ gh_updater_mod()
 
 show_menus() 
 	{
-	    if [ -e "./inst_temp" ]; then
-        docker_env_set
-        sleep 3s
-        clear
-		fi
-
-        if [ -e "./inst_2_temp" ]; then
-        docker_default_containers
-        sleep 3s
-        clear
-		fi
-
-        if [ -e "./inst_3_temp" ]; then
-        #test_env_set #debug
-        docker_pull_containers
-        sleep 3s
-        clear
-		fi
-
-        if [ -e "./inst_4_temp" ]; then
-        #test_env_set #debug
-        additional_docker_config
-        sleep 3s
-        clear
-		fi
-
-
         echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo -e " 	  \e[1;36mDOCKER - INSTALLER $version  \e[0m"
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -381,16 +339,18 @@ show_menus()
             echo
             script_prereq
             docker_install
+            docker_env_set
+            additional_docker_config
 		;;
 
 	 	"2")
 			echo "- Your choice 2: Install Docker/Docker Compose + Containers [coming soon]"
             echo
-            touch ./inst_2_temp
             script_prereq
             docker_install
-            shell_reload
+            docker_env_set
             docker_default_containers
+            docker_pull_containers
             additional_docker_config
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
