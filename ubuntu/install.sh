@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.7-6
+version=v0.41.7-7
 
 #Script Requirements
 prereqname=('Curl' )
@@ -100,7 +100,7 @@ docker_install()
         
   
         #Reloading Shell, to get docker group id
-        source ~/.bashrc
+        shell_reload
 	}
 
 # Docker Variables and Folders
