@@ -103,6 +103,7 @@ docker_install()
 # Docker Variables and Folders
 docker_env_set()
 	{
+        echo
         echo -e "\e[1;36m> Setting Docker environment variables...\e[0m"
         echo "PUID=$uid" >> /etc/environment
         echo "PGID=$ugp" >> /etc/environment
@@ -346,6 +347,7 @@ show_menus()
             echo
             script_prereq
             docker_install
+            source ~/.bashrc
             docker_env_set
             docker_default_containers
             docker_pull_containers
