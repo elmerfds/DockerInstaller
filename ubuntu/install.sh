@@ -281,7 +281,6 @@ additional_docker_config()
             else
                 echo 'dc="docker-compose -f '"/opt/docker/docker-compose.yml"'"' >> /etc/environment
             fi
-
             if grep -Fxq 'dcf='"/opt/docker/docker-compose.yml"'' $env_file 
             then
                 echo "dcf variable already exists"
