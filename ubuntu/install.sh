@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.7-5
+version=v0.41.7-6
 
 #Script Requirements
 prereqname=('Curl' )
@@ -94,6 +94,9 @@ docker_install()
         chmod +x /usr/bin/docker-compose
         usermod -aG docker ${USER}
 		echo "- Docker and Docker Compose Installed"
+
+        #install maintainer
+        touch ./inst_temp
         
   
         #Reloading Shell, to get docker group id
@@ -315,6 +318,24 @@ gh_updater_mod()
 
 show_menus() 
 	{
+        if [ -e "./inst_temp" ]; then
+            docker_env_set
+            additional_docker_config
+            rm -rf ./inst_temp
+            sleep 3s
+            clear
+		fi
+        
+        if [ -e "./inst_2_temp" ]; then
+            docker_env_set
+            docker_default_containers
+            docker_pull_containers
+            additional_docker_config
+            rm -rf ./inst_2_temp
+            sleep 3s
+            clear
+		fi
+
         echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo -e " 	  \e[1;36mDOCKER - INSTALLER $version  \e[0m"
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -338,8 +359,6 @@ show_menus()
             echo
             script_prereq
             docker_install
-            docker_env_set
-            additional_docker_config
 		;;
 
 	 	"2")
