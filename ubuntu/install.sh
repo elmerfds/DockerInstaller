@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.8-1
+version=v0.41.8-2
 
 #Script Requirements
 prereqname=('Curl' )
@@ -108,49 +108,49 @@ docker_env_set()
         echo -e "\e[1;36m> Setting Docker environment variables...\e[0m"
         if grep -Fxq "echo "PUID=$uid" >> /etc/environment" $env_file
         then
-            already exists
+            echo "already exists"
         else
             echo "PUID=$uid" >> /etc/environment
         fi
 
         if grep -Fxq "echo "PGID=$ugp" >> /etc/environment" $env_file
         then
-            already exists
+            echo "already exists"
         else
             echo "PGID=$ugp" >> /etc/environment
         fi
 
         if grep -Fxq "echo 'TZ="'"$tzone"'"' >> /etc/environment" $env_file
         then
-            already exists
+            echo "already exists"
         else
             echo 'TZ="'"$tzone"'"' >> /etc/environment
         fi        
         
         if grep -Fxq "echo 'USERDIR="'"/home/$(logname)"'"' >> /etc/environment" $env_file
         then
-            already exists
+            echo "already exists"
         else
             echo 'USERDIR="'"/home/$(logname)"'"' >> /etc/environment
         fi   
 
         if grep -Fxq "echo 'ROOTDIR="'"$docker_dir"'"' >> /etc/environment" $env_file
         then
-            already exists
+            echo "already exists"
         else
             echo 'ROOTDIR="'"$docker_dir"'"' >> /etc/environment
         fi           
 
         if grep -Fxq "echo 'DATADIR="'"$docker_data"'"' >> /etc/environment" $env_file
         then
-            already exists
+            echo "already exists"
         else
             echo 'DATADIR="'"$docker_data"'"' >> /etc/environment
         fi         
 
         if grep -Fxq "echo 'MYSQL_ROOT_PASSWORD="changeMe!"' >> /etc/environment" $env_file
         then
-            already exists
+            echo "already exists"
         else
             echo 'MYSQL_ROOT_PASSWORD="changeMe!"' >> /etc/environment
         fi           
