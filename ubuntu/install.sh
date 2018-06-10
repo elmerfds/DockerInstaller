@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.0
+version=v0.42.0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -20,6 +20,7 @@ docker_dir='/opt/docker'
 docker_data='/opt/docker/data'
 docker_init='/opt/docker/init'
 CURRENT_DIR=`dirname $0`
+env_file="/etc/environment"
 
 #Temp env variables 
 export PUID=$uid
@@ -94,10 +95,8 @@ docker_install()
         chmod +x /usr/bin/docker-compose
         usermod -aG docker ${USER}
 		echo "- Docker and Docker Compose Installed"
-        
-        #install maintainer
-        touch ./inst_temp
-
+        echo     
+  
         #Reloading Shell, to get docker group id
         shell_reload
 	}
@@ -105,24 +104,68 @@ docker_install()
 # Docker Variables and Folders
 docker_env_set()
 	{
+        echo
         echo -e "\e[1;36m> Setting Docker environment variables...\e[0m"
-        echo "PUID=$uid" >> /etc/environment
-        echo "PGID=$ugp" >> /etc/environment
-        echo 'TZ="'"$tzone"'"' >> /etc/environment
-        echo 'USERDIR="'"/home/$(logname)"'"' >> /etc/environment
-        echo 'ROOTDIR="'"$docker_dir"'"' >> /etc/environment
-        echo 'DATADIR="'"$docker_data"'"' >> /etc/environment
-        echo 'MYSQL_ROOT_PASSWORD="changeMe!"' >> /etc/environment
+        echo
+        if grep -Fxq "PUID=$uid" $env_file
+        then
+            echo "PUID already exists"
+        else
+            echo "PUID=$uid" >> /etc/environment
+        fi
 
-	    if [ ! -d "$docker_data" ]; then
+        if grep -Fxq "PGID=$ugp" $env_file
+        then
+            echo "PGID already exists"
+        else
+            echo "PGID=$ugp" >> /etc/environment
+        fi
+
+        if grep -Fxq 'TZ="'"$tzone"'"' $env_file
+        then
+            echo "TZ already exists"
+        else
+            echo 'TZ="'"$tzone"'"' >> /etc/environment
+        fi        
+        
+        if grep -Fxq 'USERDIR="'"/home/$(logname)"'"' $env_file
+        then
+            echo "USERDIR already exists"
+        else
+            echo 'USERDIR="'"/home/$(logname)"'"' >> /etc/environment
+        fi   
+
+        if grep -Fxq 'ROOTDIR="'"$docker_dir"'"' $env_file
+        then
+            echo "ROOTDIR already exists"
+        else
+            echo 'ROOTDIR="'"$docker_dir"'"' >> /etc/environment
+        fi           
+
+        if grep -Fxq 'DATADIR="'"$docker_data"'"' $env_file
+        then
+            echo "DATADIR already exists"
+        else
+            echo 'DATADIR="'"$docker_data"'"' >> /etc/environment
+        fi               
+
+        if grep -Fxq 'MYSQL_ROOT_PASSWORD="changeMe!"' $env_file
+        then
+            echo "MYSQL_ROOT_PASSWORD already exists"
+        else
+            echo 'MYSQL_ROOT_PASSWORD="changeMe!"' >> /etc/environment
+        fi          
+        
+        if [ ! -d "$docker_data" ]; then
 		mkdir -p $docker_data
 		fi
 
 	    if [ ! -d "$docker_init" ]; then
 		mkdir -p $docker_init
 		fi
-        rm -rf ./inst_temp
+        echo
         echo -e "\e[1;36m> Docker variables set...\e[0m"
+
     }
 
 # Docker Variables and Folders
@@ -133,23 +176,20 @@ docker_default_containers()
 	    cp $CURRENT_DIR/config/docker-compose.yml $docker_dir
         cp $CURRENT_DIR/config/apps/guacamole/initdb.sql $docker_init
         echo -e "\e[1;36m> Containers config added...\e[0m"
-        rm -rf ./inst_2_temp
-        touch ./inst_3_temp
         #Reload shell
-        shell_reload
+        source ~/.bashrc
     }
 
 # Pull containers
 docker_pull_containers()
 	{
         echo -e "\e[1;36m> Pulling containers...\e[0m"
+        echo
         cd $docker_dir
         docker-compose up -d
         echo -e "\e[1;36m> Done!!!...\e[0m"
         echo 
         cd $CURRENT_DIR
-        rm -rf ./inst_3_temp
-
     }
 
 docker_cont_config_update()
@@ -204,7 +244,69 @@ docker_logs()
         cd $CURRENT_DIR
 
     }             
+
+additional_docker_config()
+	{
+        echo
+        echo -e "\e[1;36m> Optional Docker install config\e[0m"       
+        echo
+        echo -e "\e[1;36m> Do you want to run docker commands without sudo for the current user? [y/n]\e[0m"
+        printf '\e[1;36m- \e[0m'    
+        read -r dc_no_sudo
+        dc_no_sudo=${dc_no_sudo:-y}
+	    if [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
+        then
+            echo
+            gpasswd -a $SUDO_USER docker
+            echo "Done!"
+        else
+            echo    
+            echo "Skipped" 
+        fi
+
+        echo
+        echo -e "\e[1;36m> Do you want to create an env variable ('dc'), so that you can run docker-compose commands from any directory? [y/n]\e[0m"
+        echo "e.g:" '$dc' "up -d"
+        printf '\e[1;36m- \e[0m'    
+        read -r dc_dcom_var
+        dc_dcom_var=${dc_dcom_var:-y}
+        if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ];
+        then
+            echo
+            if grep -Fxq 'dc="docker-compose -f '"/opt/docker/docker-compose.yml"'"' $env_file
+            then
+                echo "dc variable already exists"
+            else
+                echo 'dc="docker-compose -f '"/opt/docker/docker-compose.yml"'"' >> /etc/environment
+            fi  
+            echo "Done!"
+            echo
+        else
+            echo "Skipped"
+        fi
         
+        if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ] || [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
+        then
+            echo
+            echo -e "\e[1;36m> \e[0mDocker Install completed" 
+            echo
+            echo -e "\e[1;36m> \e[0mPress any key to quit the script and refresh login session."
+            read
+            maintainer_cleanup
+            su - $SUDO_USER
+
+        elif [ $dc_dcom_var = "N" ] || [ $dc_dcom_var = "n" ];
+        then
+            echo
+            maintainer_cleanup
+            echo -e "\e[1;36m> \e[0mDocker Install completed"
+            echo 
+            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."   
+            read
+            source ~/.bashrc  
+        fi
+       
+	}        
 
 # Debug env vars
 test_env_set()
@@ -228,10 +330,16 @@ test_env_set()
 
  shell_reload()
 	{
-        sleep 3s
+        sleep 1s
 		chmod +x $BASH_SOURCE
 		exec ./install.sh
-    }   
+    } 
+
+maintainer_cleanup()
+    {
+        rm -rf ./inst_temp
+        rm -rf ./inst_2_temp
+    }     
 
 #script Updater
 gh_updater_mod()
@@ -265,27 +373,24 @@ gh_updater_mod()
 
 show_menus() 
 	{
-	    if [ -e "./inst_temp" ]; then
-        docker_env_set
-        sleep 3s
-        clear
+        if [ -e "./inst_temp" ]; then
+            docker_env_set
+            additional_docker_config
+            sleep 3s
+            clear
 		fi
-
+        
         if [ -e "./inst_2_temp" ]; then
-        docker_default_containers
-        sleep 3s
-        clear
+            docker_env_set
+            docker_default_containers
+            docker_pull_containers
+            additional_docker_config
+            rm -rf ./inst_2_temp
+            sleep 3s
+            clear
 		fi
 
-        if [ -e "./inst_3_temp" ]; then
-        #test_env_set #debug
-        docker_pull_containers
-        sleep 3s
-        clear
-		fi
-
-
-		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo -e " 	  \e[1;36mDOCKER - INSTALLER $version  \e[0m"
 		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo " 1. Install Docker + Docker Compose  " 
@@ -306,21 +411,24 @@ show_menus()
 	 	"1")
 			echo "- Your choice: 1. Install Docker & Docker Compose"
             echo
+            #install maintainer
+            touch ./inst_temp
             script_prereq
             docker_install
-            echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
-			read
 		;;
 
 	 	"2")
 			echo "- Your choice 2: Install Docker/Docker Compose + Containers [coming soon]"
             echo
+            #install maintainer
             touch ./inst_2_temp
             script_prereq
             docker_install
-            shell_reload
+            source ~/.bashrc
+            docker_env_set
             docker_default_containers
-            rm -rf ./inst_3_temp
+            docker_pull_containers
+            additional_docker_config
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."
 			read
 		;; 
