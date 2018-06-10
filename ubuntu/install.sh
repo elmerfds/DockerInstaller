@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.7-7
+version=v0.41.7-8
 
 #Script Requirements
 prereqname=('Curl' )
@@ -94,6 +94,7 @@ docker_install()
         chmod +x /usr/bin/docker-compose
         usermod -aG docker ${USER}
 		echo "- Docker and Docker Compose Installed"
+        echo
 
         #install maintainer
         touch ./inst_temp
@@ -143,6 +144,7 @@ docker_default_containers()
 docker_pull_containers()
 	{
         echo -e "\e[1;36m> Pulling containers...\e[0m"
+        echo
         cd $docker_dir
         docker-compose up -d
         echo -e "\e[1;36m> Done!!!...\e[0m"
