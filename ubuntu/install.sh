@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.41.7-9
+version=v0.41.8-0
 
 #Script Requirements
 prereqname=('Curl' )
@@ -243,11 +243,13 @@ additional_docker_config()
             echo
             echo -e "\e[1;36m> \e[0mPress any key to quit the script and refresh login session."
             read
+            maintainer_cleanup
             su - $SUDO_USER
 
         elif [ $dc_dcom_var = "N" ] || [ $dc_dcom_var = "n" ];
         then
             echo
+            maintainer_cleanup
             echo -e "\e[1;36m> \e[0mDocker Install completed"
             echo 
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."   
@@ -282,7 +284,13 @@ test_env_set()
         sleep 1s
 		chmod +x $BASH_SOURCE
 		exec ./install.sh
-    }   
+    } 
+
+maintainer_cleanup()
+    {
+        rm -rf ./inst_temp
+        rm -rf ./inst_2_temp
+    }     
 
 #script Updater
 gh_updater_mod()
@@ -319,7 +327,6 @@ show_menus()
         if [ -e "./inst_temp" ]; then
             docker_env_set
             additional_docker_config
-            rm -rf ./inst_temp
             sleep 3s
             clear
 		fi
