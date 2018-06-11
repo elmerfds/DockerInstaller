@@ -1,14 +1,14 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.42.0-5
+version=v0.42.0-6
 
 #Script Requirements
 prereqname=('Curl' )
 prereq=('curl')
 
 #Default Container Names
-container_name=('Portainer' 'Watchtower' 'PHPmyadmin' 'Mariadb' 'Organizr' 'Postgres' 'Guacamole')
+container_name=('Portainer' 'Watchtower' 'PHPmyadmin' 'Mariadb' 'Wordpress' 'Organizr' 'Postgres' 'Guacamole')
 
 #Script config variables
 tzone=$(cat /etc/timezone)
