@@ -1,7 +1,7 @@
 #!/bin/bash -e
 #Docker Installer
 #author: elmerfdz
-version=v0.42.0-5
+version=v0.60.0-1
 
 #Script Requirements
 prereqname=('Curl' )
@@ -19,8 +19,14 @@ ubu_code=$(cut -d: -f2 < <(lsb_release -c)| xargs)
 docker_dir='/opt/docker'
 docker_data='/opt/docker/data'
 docker_init='/opt/docker/init'
+docker_compose_dir='/usr/bin/docker-compose'
+docker_compose_version=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
+docker_source_path='/etc/apt/sources.list.d/docker.list'
 CURRENT_DIR=`dirname $0`
 env_file="/etc/environment"
+installed_docker_v=$(docker --version)
+installed_dockerc_v=$(docker-compose --version)
+
 
 #Temp env variables 
 export PUID=$uid
@@ -83,13 +89,22 @@ docker_install()
         branch=stable
         fi
 
-        echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu $ubu_code $branch" >> /etc/apt/sources.list.d/docker.list
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        if grep -Fxq "deb [arch=amd64] https://download.docker.com/linux/ubuntu $ubu_code $branch" $docker_source_path
+        then
+            echo "- Docker source already exists ...skipping"
+            echo
+        else
+            echo
+            echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu $ubu_code $branch" >> /etc/apt/sources.list.d/docker.list
+	        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+            echo "- Docker source added"            
+            echo
+        fi
 
         #Install docker
         apt update
         apt install docker-ce -y
-        curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/bin/docker-compose
+        curl -L https://github.com/docker/compose/releases/download/$docker_compose_version/docker-compose-$(uname -s)-$(uname -m) -o $docker_compose_dir
 
         ##Configure docker permissions
         chmod +x /usr/bin/docker-compose
@@ -296,7 +311,10 @@ additional_docker_config()
         if [ $dc_dcom_var = "Y" ] || [ $dc_dcom_var = "y" ] || [ $dc_no_sudo = "Y" ] || [ $dc_no_sudo = "y" ];
         then
             echo
-            echo -e "\e[1;36m> \e[0mDocker Install completed" 
+            echo -e "\e[1;36m> Docker and Docker-Compose Installed\e[0m" 
+            echo 
+            echo $installed_docker_v
+            echo $installed_dockerc_v
             echo
             echo -e "\e[1;36m> \e[0mPress any key to quit the script and refresh login session."
             read
@@ -307,7 +325,10 @@ additional_docker_config()
         then
             echo
             maintainer_cleanup
-            echo -e "\e[1;36m> \e[0mDocker Install completed"
+            echo -e "\e[1;36m> Docker and Docker-Compose Installed\e[0m"
+            echo 
+            echo $installed_docker_v
+            echo $installed_dockerc_v
             echo 
             echo -e "\e[1;36m> \e[0mPress any key to return to menu..."   
             read
@@ -398,17 +419,15 @@ show_menus()
             clear
 		fi
 
-        echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 		echo -e " 	  \e[1;36mDOCKER - INSTALLER $version  \e[0m"
-		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        echo
 		echo " 1. Install Docker + Docker Compose  " 
 		echo " 2. Install Docker/Docker Compose + Containers"
         echo " 3. Update Docker Container Config "
         echo " 4. Docker Image Cleanup "      
         echo " 5. Docker Logs "  
         echo " 6. Script Updater "
-        echo " 9. Quit		 "
-		echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        echo " x. Quit		 "
 		echo
 		printf "\e[1;36m> Enter your choice: \e[0m"
 	}
@@ -483,7 +502,7 @@ show_menus()
 			done
 		;;
         
-		"9")
+		"x")
 			exit 0
 		;;
 
