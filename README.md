@@ -8,5 +8,3 @@
 3. `cd /opt/DockerInstaller/ubuntu`
 4. `sudo bash install.sh`
 
-**Note 1:** Please make sure to run as sudo.
-
